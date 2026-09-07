@@ -240,7 +240,7 @@ export default function Login() {
           Secure. Reliable. Built for Better Performance.
         </div>
 
-        <p className="mb-0 mt-1 text-[11px] text-[#7c8498]">
+        <p className="mb-0 mt-2 text-[11px] text-[#7c8498]">
           © 2026 RC ERP. All rights reserved.
         </p>
       </div>
