@@ -1,0 +1,2 @@
+import { Router } from 'express'; import { protect, allow } from '../middleware/auth.js'; import { journals,articles,issues,createJournal,createArticle,createIssue } from '../controllers/journalController.js';
+const r=Router(); r.use(protect); r.get('/journals',journals); r.get('/articles',articles); r.get('/issues',issues); r.post('/journals',allow('admin'),createJournal); r.post('/articles',allow('admin'),createArticle); r.post('/issues',allow('admin'),createIssue); export default r;

@@ -1,0 +1,2 @@
+import { Router } from 'express'; import { protect, allow } from '../middleware/auth.js'; import { usersReport,vendorsReport,paymentsReport,salesReport } from '../controllers/reportController.js';
+const r=Router(); r.use(protect); r.get('/users',allow('admin'),usersReport); r.get('/vendors',allow('admin','sales'),vendorsReport); r.get('/payments',allow('admin','finance'),paymentsReport); r.get('/sales',allow('admin','sales'),salesReport); export default r;

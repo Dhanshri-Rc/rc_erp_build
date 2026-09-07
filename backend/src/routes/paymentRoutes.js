@@ -1,0 +1,2 @@
+import { Router } from 'express'; import { protect, allow } from '../middleware/auth.js'; import { listPayments,getPayment,verifyPayment,rejectPayment,receipts } from '../controllers/paymentController.js';
+const r=Router(); r.use(protect); r.get('/',allow('admin','sales','finance'),listPayments); r.get('/receipts',allow('admin','finance'),receipts); r.get('/:id',allow('admin','sales','finance'),getPayment); r.patch('/:id/verify',allow('admin','finance'),verifyPayment); r.patch('/:id/reject',allow('admin','finance'),rejectPayment); export default r;

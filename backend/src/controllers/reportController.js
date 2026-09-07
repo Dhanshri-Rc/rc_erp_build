@@ -1,0 +1,11 @@
+import User from '../models/User.js';
+import Vendor from '../models/Vendor.js';
+import Payment from '../models/Payment.js';
+import AuthorshipSale from '../models/AuthorshipSale.js';
+import PublicationService from '../models/PublicationService.js';
+import { asyncHandler } from '../utils/http.js';
+const csv=(res,name,rows)=>{const esc=(v)=>`"${String(v??'').replaceAll('"','""')}"`;const keys=rows.length?Object.keys(rows[0]):['message'];res.setHeader('Content-Type','text/csv');res.setHeader('Content-Disposition',`attachment; filename="${name}.csv"`);res.send([keys.join(','),...rows.map(r=>keys.map(k=>esc(r[k])).join(','))].join('\n'));};
+export const usersReport=asyncHandler(async(req,res)=>csv(res,'rc-erp-users',(await User.find().lean()).map(x=>({name:x.fullName,username:x.username,email:x.email,role:x.role,status:x.status,createdAt:x.createdAt}))));
+export const vendorsReport=asyncHandler(async(req,res)=>{const f=req.user.role==='sales'?{assignedTo:req.user._id}:{};csv(res,'rc-erp-vendors',(await Vendor.find(f).lean()).map(x=>({vendor:x.vendorName,type:x.businessType,email:x.email,mobile:x.mobile,status:x.status,createdAt:x.createdAt})));});
+export const paymentsReport=asyncHandler(async(req,res)=>csv(res,'rc-erp-payments',(await Payment.find().lean()).map(x=>({paymentNo:x.paymentNo,type:x.sourceType,amount:x.amount,status:x.status,transactionId:x.transactionId,createdAt:x.createdAt}))));
+export const salesReport=asyncHandler(async(req,res)=>{const f=req.user.role==='sales'?{createdBy:req.user._id}:{};const a=await AuthorshipSale.find(f).lean(),p=await PublicationService.find(f).lean();csv(res,'rc-erp-sales',[...a.map(x=>({reference:x.saleNo,service:'Authorship',amount:x.totalPrice,advance:x.advancePayment,remaining:x.remainingAmount,date:x.createdAt})),...p.map(x=>({reference:x.publicationNo,service:'Publication',amount:x.totalAmount,advance:x.advanceAmount,remaining:x.remainingAmount,date:x.createdAt}))]);});

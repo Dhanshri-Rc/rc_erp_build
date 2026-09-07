@@ -1,0 +1,2 @@
+import { Router } from 'express'; import { protect, allow } from '../middleware/auth.js'; import { upload } from '../middleware/upload.js'; import { listAuthorship,createAuthorship,listPublications,createPublication } from '../controllers/salesController.js';
+const r=Router(); r.use(protect,allow('admin','sales')); r.route('/authorship').get(listAuthorship).post(upload.single('paymentProof'),createAuthorship); r.route('/publications').get(listPublications).post(upload.single('paymentProof'),createPublication); export default r;
