@@ -20,6 +20,7 @@ import {
   Landmark,
   LayoutDashboard,
   ListTodo,
+  LogOut,
   Menu,
   MessageCircle,
   ReceiptText,
@@ -132,23 +133,27 @@ const roleLabel = {
 };
 
 const sidebarBase =
-  "fixed z-50 inset-y-0 left-0 w-[224px] max-[1200px]:w-[205px] bg-white border-r border-[#eceef5] flex flex-col transition-transform duration-[250ms] max-[900px]:shadow-[12px_0_30px_rgba(29,34,60,0.12)] max-[900px]:-translate-x-full";
+  "fixed z-50 top-0 bottom-0 left-0 h-screen w-[224px] max-[1200px]:w-[205px] overflow-hidden bg-white border-r border-[#eceef5] flex flex-col transition-transform duration-[250ms] max-[900px]:shadow-[12px_0_30px_rgba(29,34,60,0.12)] max-[900px]:-translate-x-full";
 const sidebarOpen = "max-[900px]:translate-x-0";
 const navItemBase =
-  "flex items-center gap-[10px] h-9 px-[10px] rounded-[6px] text-[#5f687b] my-[2px] text-[10px] transition-all duration-200 hover:bg-[#f7f5ff] hover:text-[#613ef0] hover:translate-x-[2px] [&>svg]:w-[15px] [&>svg]:h-[15px]";
+  "flex items-center gap-[10px] h-9 px-[10px] rounded-[6px] text-[#5f687b] my-[2px] text-[12px] transition-all duration-200 hover:bg-[#f7f5ff] hover:text-[#613ef0] hover:translate-x-[2px] [&>svg]:w-[15px] [&>svg]:h-[15px]";
 const navItemActive =
   "bg-rc-grad text-white shadow-[0_5px_12px_rgba(105,75,232,0.18)] hover:translate-x-0 hover:bg-rc-grad hover:text-white";
 const iconBtn =
   "w-8 h-8 border-0 bg-white rounded-full grid place-items-center text-[#70798e] relative transition-colors duration-200 hover:bg-[#f6f3ff] hover:text-[#6d49ef] [&>svg]:w-[15px]";
-
+  
 export default function Layout() {
   const { user, logout } = useAuth();
   const nav = useNavigate(),
     loc = useLocation();
   const [open, setOpen] = useState(false),
     [notifications, setNotifications] = useState({ items: [], unread: 0 }),
-    [drop, setDrop] = useState(false);
-  useEffect(() => setOpen(false), [loc.pathname]);
+    [drop, setDrop] = useState(false),
+    [profileMenu, setProfileMenu] = useState(false);
+  useEffect(() => {
+    setOpen(false);
+    setProfileMenu(false);
+  }, [loc.pathname]);
   useEffect(() => {
     if (user)
       api
@@ -185,7 +190,7 @@ export default function Layout() {
             ERP
           </div>
         </div>
-        <div className="flex-1 overflow-auto py-[11px] px-[10px]">
+        <div className="flex-1 overflow-hidden py-[11px] px-[10px]">
           {sections[user.role].map(([group, items]) => (
             <div key={group}>
               <div className="text-[8px] font-semibold text-[#afb5c4] tracking-[0.08em] mt-4 mx-[9px] mb-2">
@@ -206,23 +211,49 @@ export default function Layout() {
             </div>
           ))}
         </div>
-        <button
-          className="mx-[11px] mb-[15px] mt-2 p-[10px] border-t border-[#eff0f5] flex items-center gap-2 bg-transparent border-x-0 border-b-0 text-left w-[calc(100%-22px)]"
-          onClick={signout}
-        >
-          <div className="w-[30px] h-[30px] rounded-full inline-flex items-center justify-center bg-[#ede8ff] text-rc-purple font-bold text-[10px] flex-none">
-            {initials(user.fullName)}
-          </div>
-          <div className="min-w-0 flex-1">
-            <b className="text-[9px] block whitespace-nowrap overflow-hidden text-ellipsis">
-              {user.fullName}
-            </b>
-            <span className="text-[7.5px] text-[#9aa1b1] block mt-[2px]">
-              {roleLabel[user.role]}
-            </span>
-          </div>
-          <ChevronDown size={12} />
-        </button>
+        <div className="relative mx-[11px] mb-[15px] mt-2">
+          <AnimatePresence>
+            {profileMenu && (
+              <motion.div
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 5 }}
+                className="absolute bottom-[calc(100%+6px)] left-0 right-0 overflow-hidden rounded-[7px] border border-[#e8eaf1] bg-white p-1 shadow-[0_10px_28px_rgba(34,40,74,0.14)]"
+              >
+                <button
+                  type="button"
+                  onClick={signout}
+                  className="flex h-9 w-full items-center gap-[9px] rounded-[5px] border-0 bg-transparent px-[10px] text-left text-[12px] text-[#e5484d] transition-colors hover:bg-[#fff1f1] [&>svg]:h-[15px] [&>svg]:w-[15px]"
+                >
+                  <LogOut />
+                  Logout
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <button
+            type="button"
+            className="flex w-full items-center gap-2 border-x-0 border-b-0 border-t border-[#eff0f5] bg-transparent p-[10px] text-left"
+            onClick={() => setProfileMenu((value) => !value)}
+            aria-expanded={profileMenu}
+          >
+            <div className="w-[30px] h-[30px] rounded-full inline-flex items-center justify-center bg-[#ede8ff] text-rc-purple font-bold text-[10px] flex-none">
+              {initials(user.fullName)}
+            </div>
+            <div className="min-w-0 flex-1">
+              <b className="text-[9px] block whitespace-nowrap overflow-hidden text-ellipsis">
+                {user.fullName}
+              </b>
+              <span className="text-[7.5px] text-[#9aa1b1] block mt-[2px]">
+                {roleLabel[user.role]}
+              </span>
+            </div>
+            <ChevronDown
+              size={12}
+              className={`transition-transform ${profileMenu ? "rotate-180" : ""}`}
+            />
+          </button>
+        </div>
       </aside>
       <main className="ml-[224px] min-h-screen max-[1200px]:ml-[205px] max-[900px]:ml-0">
         <header className="h-16 bg-white border-b border-[#eceef5] flex items-center justify-between px-6 sticky top-0 z-[35] max-[900px]:px-4 max-[680px]:h-[58px]">
