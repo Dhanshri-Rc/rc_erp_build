@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import {
   Activity,
@@ -67,7 +68,9 @@ export default function AdminDashboard() {
       <div className={tw.pageHead}>
         <div>
           <h1 className={tw.pageTitleH1}>Admin Dashboard</h1>
-          <p className={tw.pageTitleP}>Overview of system activities and operations</p>
+          <p className={tw.pageTitleP}>
+            Overview of system activities and operations
+          </p>
         </div>
         <div className={tw.headActions}>
           <button className={tw.button.date}>
@@ -113,7 +116,11 @@ export default function AdminDashboard() {
       <div className={tw.dashboardGrid}>
         <Panel
           title="Users by Role"
-          action={<span className={tw.viewLink}>View All</span>}
+          action={
+            <Link to="/admin/users" className={tw.viewLink}>
+              View All
+            </Link>
+          }
         >
           <div className={tw.donutWrap}>
             <ResponsiveContainer width="100%" height="100%">
@@ -136,7 +143,11 @@ export default function AdminDashboard() {
         </Panel>
         <Panel
           title="Recent User Registrations"
-          action={<span className={tw.viewLink}>View All</span>}
+          action={
+            <Link to="/admin/users" className={tw.viewLink}>
+              View All
+            </Link>
+          }
         >
           <div className={tw.tableWrap}>
             <table className={tw.dataTable} style={{ minWidth: 420 }}>
@@ -178,7 +189,11 @@ export default function AdminDashboard() {
         </Panel>
         <Panel
           title="Accounting Log Overview"
-          action={<span className={tw.viewLink}>View All</span>}
+          action={
+            <Link to="/admin/accounting" className={tw.viewLink}>
+              View All
+            </Link>
+          }
         >
           <div className={tw.chartWrap}>
             <ResponsiveContainer width="100%" height="100%">
@@ -213,11 +228,15 @@ export default function AdminDashboard() {
           <div className={tw.panelPad} style={{ paddingTop: 0 }}>
             <div className={tw.kpiLine}>
               <span>Total Logs</span>
-              <b className={tw.kpiLineB}>{money(data.accountingOverview?.[0]?.value)}</b>
+              <b className={tw.kpiLineB}>
+                {money(data.accountingOverview?.[0]?.value)}
+              </b>
             </div>
             <div className={tw.kpiLine}>
               <span>Verified Logs</span>
-              <b className={tw.kpiLineB}>{money(data.accountingOverview?.[1]?.value)}</b>
+              <b className={tw.kpiLineB}>
+                {money(data.accountingOverview?.[1]?.value)}
+              </b>
             </div>
           </div>
         </Panel>
@@ -226,7 +245,9 @@ export default function AdminDashboard() {
         <Panel
           title="Vendors by Employee (Top 5)"
           action={
-            <span className={tw.viewLink}>View all vendors by employee →</span>
+            <Link to="/admin/vendors/by-employee" className={tw.viewLink}>
+              View all vendors by employee →
+            </Link>
           }
         >
           <div className={tw.tableWrap}>
@@ -260,7 +281,11 @@ export default function AdminDashboard() {
         </Panel>
         <Panel
           title="Recent Accounting Logs"
-          action={<span className={tw.viewLink}>View All</span>}
+          action={
+            <Link to="/admin/accounting" className={tw.viewLink}>
+              View All
+            </Link>
+          }
         >
           <div className={tw.tableWrap}>
             <table className={tw.dataTable}>
