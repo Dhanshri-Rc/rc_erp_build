@@ -61,8 +61,8 @@ export const panel =
 export const panelPad = "p-[15px]";
 export const panelHead =
   "h-[42px] px-[15px] border-b border-[#f0f1f5] flex items-center justify-between max-[680px]:h-[39px]";
-export const panelHeadH3 = "text-[10px] m-0 font-[650]";
-export const viewLink = "text-[8px] text-[#6a43ee] font-semibold";
+export const panelHeadH3 = "text-[12px] m-0 font-[650]";
+export const viewLink = "text-[10px] text-[#6a43ee] font-semibold";
 
 export const dashboardGrid =
   "grid grid-cols-[1fr_1.35fr_1.4fr] gap-3 mb-[15px] max-[1200px]:grid-cols-2 max-[1200px]:[&>*:last-child]:col-span-2 max-[680px]:grid-cols-1 max-[680px]:[&>*:last-child]:col-span-1";
