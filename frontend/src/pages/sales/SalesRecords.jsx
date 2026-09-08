@@ -3,6 +3,8 @@ import { Download, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { api } from "../../services/api";
 import { Badge, Button, Pagination, dateFmt, money } from "../../components/UI";
+import * as tw from "../../styles/tw";
+
 export default function SalesRecords({ type = "authorship" }) {
   const [items, setItems] = useState([]),
     [meta, setMeta] = useState(null),
@@ -20,12 +22,12 @@ export default function SalesRecords({ type = "authorship" }) {
   }, [page, type]);
   return (
     <>
-      <div className="page-head">
-        <div className="page-title">
-          <h1>
+      <div className={tw.pageHead}>
+        <div>
+          <h1 className={tw.pageTitleH1}>
             {publication ? "Direct Paper Publications" : "Authorship Sales"}
           </h1>
-          <p>
+          <p className={tw.pageTitleP}>
             {publication
               ? "All direct publication services created by your account."
               : "All authorship sales created by your account."}
@@ -43,41 +45,49 @@ export default function SalesRecords({ type = "authorship" }) {
           </Button>
         </Link>
       </div>
-      <div className="panel">
-        <div className="table-wrap">
-          <table className="data-table">
+      <div className={tw.panel}>
+        <div className={tw.tableWrap}>
+          <table className={tw.dataTable}>
             <thead>
               <tr>
-                <th>Reference</th>
-                <th>{publication ? "Paper / Journal" : "Article / Journal"}</th>
-                <th>Vendor</th>
-                <th>Total</th>
-                <th>Advance</th>
-                <th>Remaining</th>
-                <th>Payment Status</th>
-                <th>Created</th>
+                <th className={tw.th}>Reference</th>
+                <th className={tw.th}>
+                  {publication ? "Paper / Journal" : "Article / Journal"}
+                </th>
+                <th className={tw.th}>Vendor</th>
+                <th className={tw.th}>Total</th>
+                <th className={tw.th}>Advance</th>
+                <th className={tw.th}>Remaining</th>
+                <th className={tw.th}>Payment Status</th>
+                <th className={tw.th}>Created</th>
               </tr>
             </thead>
             <tbody>
               {items.map((x) => (
-                <tr key={x._id}>
-                  <td>
-                    <strong>{publication ? x.publicationNo : x.saleNo}</strong>
+                <tr key={x._id} className={tw.tr}>
+                  <td className={tw.td}>
+                    <strong className={tw.tdStrong}>
+                      {publication ? x.publicationNo : x.saleNo}
+                    </strong>
                   </td>
-                  <td>
+                  <td className={tw.td}>
                     {publication ? x.paperTitle : x.article?.title}
-                    <div className="tiny muted">{x.journal?.name}</div>
+                    <div className={`${tw.text.tiny} ${tw.text.muted}`}>
+                      {x.journal?.name}
+                    </div>
                   </td>
-                  <td>{x.vendor?.vendorName}</td>
-                  <td>{money(publication ? x.totalAmount : x.totalPrice)}</td>
-                  <td>
+                  <td className={tw.td}>{x.vendor?.vendorName}</td>
+                  <td className={tw.td}>
+                    {money(publication ? x.totalAmount : x.totalPrice)}
+                  </td>
+                  <td className={tw.td}>
                     {money(publication ? x.advanceAmount : x.advancePayment)}
                   </td>
-                  <td>{money(x.remainingAmount)}</td>
-                  <td>
+                  <td className={tw.td}>{money(x.remainingAmount)}</td>
+                  <td className={tw.td}>
                     <Badge>{x.paymentStatus}</Badge>
                   </td>
-                  <td>{dateFmt(x.createdAt)}</td>
+                  <td className={tw.td}>{dateFmt(x.createdAt)}</td>
                 </tr>
               ))}
             </tbody>

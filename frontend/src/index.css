@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    @apply m-0 min-h-full text-rc-text bg-rc-bg font-sans;
+  }
+  body {
+    @apply text-[13px];
+  }
+  button {
+    @apply cursor-pointer;
+  }
+  a {
+    @apply text-inherit no-underline;
+  }
+}

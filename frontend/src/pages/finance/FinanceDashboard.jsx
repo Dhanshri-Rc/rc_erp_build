@@ -28,6 +28,7 @@ import {
   dateFmt,
   money,
 } from "../../components/UI";
+import * as tw from "../../styles/tw";
 
 export default function FinanceDashboard() {
   const [d, setD] = useState(null);
@@ -38,15 +39,15 @@ export default function FinanceDashboard() {
   const m = d.metrics;
   return (
     <>
-      <div className="page-head">
-        <div className="page-title">
-          <h1>Finance Dashboard</h1>
-          <p>
+      <div className={tw.pageHead}>
+        <div>
+          <h1 className={tw.pageTitleH1}>Finance Dashboard</h1>
+          <p className={tw.pageTitleP}>
             Payment verification, receipts and financial performance overview.
           </p>
         </div>
       </div>
-      <div className="stats-grid">
+      <div className={tw.statsGrid}>
         <StatCard
           label="Total Revenue"
           value={money(m.totalRevenue)}
@@ -76,9 +77,9 @@ export default function FinanceDashboard() {
           icon={ReceiptText}
         />
       </div>
-      <div className="dashboard-grid">
+      <div className={tw.dashboardGrid}>
         <Panel title="Revenue Overview">
-          <div className="chart-wrap">
+          <div className={tw.chartWrap}>
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={d.revenueOverview}>
                 <defs>
@@ -103,7 +104,7 @@ export default function FinanceDashboard() {
           </div>
         </Panel>
         <Panel title="Payment Status Distribution">
-          <div className="donut-wrap">
+          <div className={tw.donutWrap}>
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -122,51 +123,51 @@ export default function FinanceDashboard() {
           </div>
         </Panel>
         <Panel title="Finance Snapshot">
-          <div className="panel-pad">
-            <div className="kpi-line">
+          <div className={tw.panelPad}>
+            <div className={tw.kpiLine}>
               <span>Verified payments</span>
-              <b>{m.verifiedPayments}</b>
+              <b className={tw.kpiLineB}>{m.verifiedPayments}</b>
             </div>
-            <div className="kpi-line">
+            <div className={tw.kpiLine}>
               <span>Pending verifications</span>
-              <b>{m.pendingVerifications}</b>
+              <b className={tw.kpiLineB}>{m.pendingVerifications}</b>
             </div>
-            <div className="kpi-line">
+            <div className={tw.kpiLine}>
               <span>Rejected payments</span>
-              <b>{m.rejectedPayments}</b>
+              <b className={tw.kpiLineB}>{m.rejectedPayments}</b>
             </div>
-            <div className="kpi-line">
+            <div className={tw.kpiLine}>
               <span>Receipts generated</span>
-              <b>{m.receipts}</b>
+              <b className={tw.kpiLineB}>{m.receipts}</b>
             </div>
           </div>
         </Panel>
       </div>
-      <div className="dashboard-grid two">
+      <div className={tw.dashboardGridTwo}>
         <Panel title="Recent Transactions">
-          <div className="table-wrap">
-            <table className="data-table">
+          <div className={tw.tableWrap}>
+            <table className={tw.dataTable}>
               <thead>
                 <tr>
-                  <th>Reference</th>
-                  <th>Vendor</th>
-                  <th>Submitted By</th>
-                  <th>Amount</th>
-                  <th>Date</th>
-                  <th>Status</th>
+                  <th className={tw.th}>Reference</th>
+                  <th className={tw.th}>Vendor</th>
+                  <th className={tw.th}>Submitted By</th>
+                  <th className={tw.th}>Amount</th>
+                  <th className={tw.th}>Date</th>
+                  <th className={tw.th}>Status</th>
                 </tr>
               </thead>
               <tbody>
                 {d.recentTransactions.map((p) => (
-                  <tr key={p._id}>
-                    <td>
-                      <strong>{p.paymentNo}</strong>
+                  <tr key={p._id} className={tw.tr}>
+                    <td className={tw.td}>
+                      <strong className={tw.tdStrong}>{p.paymentNo}</strong>
                     </td>
-                    <td>{p.vendor?.vendorName}</td>
-                    <td>{p.submittedBy?.fullName}</td>
-                    <td>{money(p.amount)}</td>
-                    <td>{dateFmt(p.createdAt)}</td>
-                    <td>
+                    <td className={tw.td}>{p.vendor?.vendorName}</td>
+                    <td className={tw.td}>{p.submittedBy?.fullName}</td>
+                    <td className={tw.td}>{money(p.amount)}</td>
+                    <td className={tw.td}>{dateFmt(p.createdAt)}</td>
+                    <td className={tw.td}>
                       <Badge>{p.status}</Badge>
                     </td>
                   </tr>
@@ -176,25 +177,25 @@ export default function FinanceDashboard() {
           </div>
         </Panel>
         <Panel title="Pending Verifications">
-          <div className="table-wrap">
-            <table className="data-table" style={{ minWidth: 500 }}>
+          <div className={tw.tableWrap}>
+            <table className={tw.dataTable} style={{ minWidth: 500 }}>
               <thead>
                 <tr>
-                  <th>Payment</th>
-                  <th>Vendor</th>
-                  <th>Amount</th>
-                  <th>Status</th>
+                  <th className={tw.th}>Payment</th>
+                  <th className={tw.th}>Vendor</th>
+                  <th className={tw.th}>Amount</th>
+                  <th className={tw.th}>Status</th>
                 </tr>
               </thead>
               <tbody>
                 {d.pendingPayments.map((p) => (
-                  <tr key={p._id}>
-                    <td>
-                      <strong>{p.paymentNo}</strong>
+                  <tr key={p._id} className={tw.tr}>
+                    <td className={tw.td}>
+                      <strong className={tw.tdStrong}>{p.paymentNo}</strong>
                     </td>
-                    <td>{p.vendor?.vendorName}</td>
-                    <td>{money(p.amount)}</td>
-                    <td>
+                    <td className={tw.td}>{p.vendor?.vendorName}</td>
+                    <td className={tw.td}>{money(p.amount)}</td>
+                    <td className={tw.td}>
                       <Badge>{p.status}</Badge>
                     </td>
                   </tr>

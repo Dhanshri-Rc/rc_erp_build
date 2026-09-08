@@ -1,18 +1,20 @@
 import { BarChart3, CheckCircle2, Download, Settings2 } from "lucide-react";
 import { Button, StatCard } from "../../components/UI";
+import * as tw from "../../styles/tw";
+
 export default function Placeholder({
   title = "Module",
   description = "This module uses the same RC ERP role-protected workspace.",
 }) {
   return (
     <>
-      <div className="page-head">
-        <div className="page-title">
-          <h1>{title}</h1>
-          <p>{description}</p>
+      <div className={tw.pageHead}>
+        <div>
+          <h1 className={tw.pageTitleH1}>{title}</h1>
+          <p className={tw.pageTitleP}>{description}</p>
         </div>
       </div>
-      <div className="stats-grid">
+      <div className={tw.statsGrid}>
         <StatCard
           label="Module Status"
           value="Active"
@@ -34,9 +36,9 @@ export default function Placeholder({
           tone="cyan"
         />
       </div>
-      <div className="panel panel-pad">
-        <h3 style={{ fontSize: 11 }}>RC ERP {title}</h3>
-        <p className="muted small" style={{ lineHeight: 1.7 }}>
+      <div className={`${tw.panel} ${tw.panelPad}`}>
+        <h3 className="text-[11px] m-0 mb-2 font-semibold">RC ERP {title}</h3>
+        <p className={`${tw.text.muted} ${tw.text.small} leading-[1.7]`}>
           This workspace is included in the navigation and protected by the same
           authenticated role layout. Core operational data entry and
           verification workflows are implemented in the dedicated Vendor,

@@ -12,6 +12,7 @@ import {
   dateFmt,
   money,
 } from "../../components/UI";
+import * as tw from "../../styles/tw";
 
 const initial = {
   leadTitle: "",
@@ -79,20 +80,20 @@ export default function LeadGeneration() {
   };
   return (
     <>
-      <div className="page-head">
-        <div className="page-title">
-          <h1>Lead Generation</h1>
-          <p>
+      <div className={tw.pageHead}>
+        <div>
+          <h1 className={tw.pageTitleH1}>Lead Generation</h1>
+          <p className={tw.pageTitleP}>
             Capture and manage potential leads for new journals or low-cost
             deals not currently available.
           </p>
         </div>
       </div>
-      <div className="form-layout">
+      <div className={tw.formLayout}>
         <form onSubmit={submit}>
-          <div className="form-card">
-            <h3>1. Lead Information</h3>
-            <div className="form-grid three">
+          <div className={tw.formCard}>
+            <h3 className={tw.formCardH3}>1. Lead Information</h3>
+            <div className={tw.formGridThree}>
               <Field label="Lead Title / Requirement" required className="full">
                 <Input
                   value={f.leadTitle}
@@ -165,9 +166,9 @@ export default function LeadGeneration() {
               </Field>
             </div>
           </div>
-          <div className="form-card">
-            <h3>2. Contact & Organization Details</h3>
-            <div className="form-grid three">
+          <div className={tw.formCard}>
+            <h3 className={tw.formCardH3}>2. Contact & Organization Details</h3>
+            <div className={tw.formGridThree}>
               <Field label="Contact Name" required>
                 <Input
                   value={f.contactName}
@@ -233,9 +234,9 @@ export default function LeadGeneration() {
               </Field>
             </div>
           </div>
-          <div className="form-card">
-            <h3>3. Lead Preferences</h3>
-            <div className="form-grid three">
+          <div className={tw.formCard}>
+            <h3 className={tw.formCardH3}>3. Lead Preferences</h3>
+            <div className={tw.formGridThree}>
               <Field label="Subject Area / Category">
                 <Input
                   value={f.subjectArea}
@@ -282,9 +283,9 @@ export default function LeadGeneration() {
               </Field>
             </div>
           </div>
-          <div className="form-card">
-            <h3>4. Source & Additional Information</h3>
-            <div className="form-grid">
+          <div className={tw.formCard}>
+            <h3 className={tw.formCardH3}>4. Source & Additional Information</h3>
+            <div className={tw.formGrid}>
               <Field label="Lead Source" required>
                 <Select
                   value={f.leadSource}
@@ -305,7 +306,7 @@ export default function LeadGeneration() {
                 />
               </Field>
               <Field label="Attachment">
-                <label className="file-drop">
+                <label className={tw.fileDrop}>
                   <div>
                     <Upload size={16} />
                     <div>{file ? file.name : "Upload supporting file"}</div>
@@ -326,9 +327,9 @@ export default function LeadGeneration() {
               </Field>
             </div>
           </div>
-          <div className="form-card">
-            <h3>5. Follow-up & Assignment</h3>
-            <div className="form-grid three">
+          <div className={tw.formCard}>
+            <h3 className={tw.formCardH3}>5. Follow-up & Assignment</h3>
+            <div className={tw.formGridThree}>
               <Field label="Assigned To" required>
                 <Input readOnly value="Me (Current Marketing User)" />
               </Field>
@@ -350,7 +351,7 @@ export default function LeadGeneration() {
                 </Select>
               </Field>
             </div>
-            <div className="form-actions">
+            <div className={tw.formActions}>
               <Button kind="secondary">Reset</Button>
               <Button type="submit" icon={Save} disabled={busy}>
                 {busy ? "Saving…" : "Save Lead"}
@@ -358,49 +359,51 @@ export default function LeadGeneration() {
             </div>
           </div>
         </form>
-        <aside className="side-info">
-          <div className="info-card purple">
-            <h4>Lead Summary</h4>
-            <div className="summary-list">
-              <div className="summary-line">
-                <span>Lead For</span>
-                <strong>{f.leadFor || "—"}</strong>
+        <aside className={tw.sideInfo}>
+          <div className={tw.infoCard.purple}>
+            <h4 className={tw.infoCardH4}>Lead Summary</h4>
+            <div className={tw.summaryList}>
+              <div className={tw.summaryLine}>
+                <span className={tw.summaryLineSpan}>Lead For</span>
+                <strong className={tw.summaryLineStrong}>{f.leadFor || "—"}</strong>
               </div>
-              <div className="summary-line">
-                <span>Priority</span>
-                <strong>{f.priority}</strong>
+              <div className={tw.summaryLine}>
+                <span className={tw.summaryLineSpan}>Priority</span>
+                <strong className={tw.summaryLineStrong}>{f.priority}</strong>
               </div>
-              <div className="summary-line">
-                <span>Budget</span>
-                <strong>{money(f.targetBudget)}</strong>
+              <div className={tw.summaryLine}>
+                <span className={tw.summaryLineSpan}>Budget</span>
+                <strong className={tw.summaryLineStrong}>{money(f.targetBudget)}</strong>
               </div>
-              <div className="summary-line">
-                <span>Contact</span>
-                <strong>{f.contactName || "—"}</strong>
+              <div className={tw.summaryLine}>
+                <span className={tw.summaryLineSpan}>Contact</span>
+                <strong className={tw.summaryLineStrong}>{f.contactName || "—"}</strong>
               </div>
-              <div className="summary-line">
-                <span>Follow-up</span>
-                <strong>{f.nextFollowUpDate || "—"}</strong>
+              <div className={tw.summaryLine}>
+                <span className={tw.summaryLineSpan}>Follow-up</span>
+                <strong className={tw.summaryLineStrong}>
+                  {f.nextFollowUpDate || "—"}
+                </strong>
               </div>
             </div>
           </div>
-          <div className="info-card blue">
-            <div className="info-row">
-              <div className="info-icon">
+          <div className={tw.infoCard.blue}>
+            <div className={tw.infoRow}>
+              <div className={tw.infoIcon}>
                 <Info />
               </div>
               <div>
-                <b>Quick Tips</b>
-                <p>
+                <b className={tw.infoRowB}>Quick Tips</b>
+                <p className={tw.infoRowP}>
                   Capture a clear requirement, correct contact details and a
                   realistic follow-up date for stronger conversion tracking.
                 </p>
               </div>
             </div>
           </div>
-          <div className="info-card">
-            <h4>Lead Status Workflow</h4>
-            <div className="workflow">
+          <div className={tw.infoCard[""]}>
+            <h4 className={tw.infoCardH4}>Lead Status Workflow</h4>
+            <div className={tw.workflow}>
               {[
                 "New",
                 "Contacted",
@@ -410,51 +413,51 @@ export default function LeadGeneration() {
                 "Converted / Closed",
               ].map((s, i) => (
                 <div key={s}>
-                  <div className="workflow-step">
-                    <span className="workflow-dot">{i + 1}</span>
+                  <div className={tw.workflowStep}>
+                    <span className={tw.workflowDot}>{i + 1}</span>
                     {s}
                   </div>
-                  {i < 5 && <div className="workflow-line" />}
+                  {i < 5 && <div className={tw.workflowLine} />}
                 </div>
               ))}
             </div>
           </div>
         </aside>
       </div>
-      <div className="panel" style={{ marginTop: 14 }}>
-        <div className="panel-head">
-          <h3>Recent Leads</h3>
+      <div className={tw.panel} style={{ marginTop: 14 }}>
+        <div className={tw.panelHead}>
+          <h3 className={tw.panelHeadH3}>Recent Leads</h3>
         </div>
-        <div className="table-wrap">
-          <table className="data-table">
+        <div className={tw.tableWrap}>
+          <table className={tw.dataTable}>
             <thead>
               <tr>
-                <th>#</th>
-                <th>Lead Title</th>
-                <th>Lead For</th>
-                <th>Contact Name</th>
-                <th>Target Budget</th>
-                <th>Status</th>
-                <th>Priority</th>
-                <th>Next Follow-up</th>
-                <th>Assigned To</th>
-                <th>Actions</th>
+                <th className={tw.th}>#</th>
+                <th className={tw.th}>Lead Title</th>
+                <th className={tw.th}>Lead For</th>
+                <th className={tw.th}>Contact Name</th>
+                <th className={tw.th}>Target Budget</th>
+                <th className={tw.th}>Status</th>
+                <th className={tw.th}>Priority</th>
+                <th className={tw.th}>Next Follow-up</th>
+                <th className={tw.th}>Assigned To</th>
+                <th className={tw.th}>Actions</th>
               </tr>
             </thead>
             <tbody>
               {recent.map((l, i) => (
-                <tr key={l._id}>
-                  <td>{i + 1}</td>
-                  <td>
-                    <strong>{l.leadTitle}</strong>
+                <tr key={l._id} className={tw.tr}>
+                  <td className={tw.td}>{i + 1}</td>
+                  <td className={tw.td}>
+                    <strong className={tw.tdStrong}>{l.leadTitle}</strong>
                   </td>
-                  <td>{l.leadFor}</td>
-                  <td>{l.contactName}</td>
-                  <td>{money(l.targetBudget)}</td>
-                  <td>
+                  <td className={tw.td}>{l.leadFor}</td>
+                  <td className={tw.td}>{l.contactName}</td>
+                  <td className={tw.td}>{money(l.targetBudget)}</td>
+                  <td className={tw.td}>
                     <Badge>{l.status}</Badge>
                   </td>
-                  <td>
+                  <td className={tw.td}>
                     <Badge
                       tone={
                         l.priority === "high"
@@ -467,10 +470,10 @@ export default function LeadGeneration() {
                       {l.priority}
                     </Badge>
                   </td>
-                  <td>{dateFmt(l.nextFollowUpDate)}</td>
-                  <td>{l.assignedTo?.fullName || "Me"}</td>
-                  <td>
-                    <button className="action-link">View</button>
+                  <td className={tw.td}>{dateFmt(l.nextFollowUpDate)}</td>
+                  <td className={tw.td}>{l.assignedTo?.fullName || "Me"}</td>
+                  <td className={tw.td}>
+                    <button className={tw.actionLink}>View</button>
                   </td>
                 </tr>
               ))}

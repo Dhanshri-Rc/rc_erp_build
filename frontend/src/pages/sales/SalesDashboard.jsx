@@ -32,6 +32,7 @@ import {
   dateFmt,
   money,
 } from "../../components/UI";
+import * as tw from "../../styles/tw";
 
 export default function SalesDashboard() {
   const { user } = useAuth();
@@ -65,18 +66,20 @@ export default function SalesDashboard() {
   ];
   return (
     <>
-      <div className="page-head">
-        <div className="page-title">
-          <h1>Welcome back, {user.fullName}! 👋</h1>
-          <p>Here's what's happening with your marketing activities today.</p>
+      <div className={tw.pageHead}>
+        <div>
+          <h1 className={tw.pageTitleH1}>Welcome back, {user.fullName}! 👋</h1>
+          <p className={tw.pageTitleP}>
+            Here's what's happening with your marketing activities today.
+          </p>
         </div>
-        <div className="head-actions">
-          <button className="date-btn">
+        <div className={tw.headActions}>
+          <button className={tw.button.date}>
             <CalendarDays size={12} /> 01 Sep 2026 - 30 Sep 2026
           </button>
         </div>
       </div>
-      <div className="stats-grid">
+      <div className={tw.statsGrid}>
         <StatCard
           label="Total Vendors"
           value={m.totalVendors}
@@ -110,38 +113,42 @@ export default function SalesDashboard() {
           icon={Target}
         />
       </div>
-      <div className="section-label">QUICK ACTIONS</div>
-      <div className="quick-grid">
-        {quick.map(([a, b, I, to]) => (
-          <div className="quick-card" key={a} onClick={() => nav(to)}>
-            <div className="qicon">
+      <div className={tw.sectionLabel}>QUICK ACTIONS</div>
+      <div className={tw.quickGrid}>
+        {quick.map(([a, b, I, to], idx) => (
+          <div
+            className={tw.quickCard}
+            key={a}
+            onClick={() => nav(to)}
+          >
+            <div className={tw.quickIconTones[idx % tw.quickIconTones.length]}>
               <I size={15} />
             </div>
             <div>
-              <b>{a}</b>
-              <small>{b}</small>
+              <b className={tw.quickCardB}>{a}</b>
+              <small className={tw.quickCardSmall}>{b}</small>
             </div>
-            <span className="quick-arrow">→</span>
+            <span className={tw.quickArrow}>→</span>
           </div>
         ))}
       </div>
-      <div className="dashboard-grid">
+      <div className={tw.dashboardGrid}>
         <Panel
           title="Sales Overview"
           action={
-            <span className="chart-legend">
+            <span className={tw.chartLegend}>
               <span>
-                <i className="legend-dot" />
+                <i className={tw.legendDot} />
                 Authorship Sale
               </span>
               <span>
-                <i className="legend-dot cyan" />
+                <i className={`${tw.legendDot} ${tw.legendDotCyan}`} />
                 Direct Publication
               </span>
             </span>
           }
         >
-          <div className="chart-wrap">
+          <div className={tw.chartWrap}>
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={d.salesOverview}>
                 <defs>
@@ -171,7 +178,7 @@ export default function SalesDashboard() {
           </div>
         </Panel>
         <Panel title="Service Distribution">
-          <div className="donut-wrap">
+          <div className={tw.donutWrap}>
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -191,15 +198,15 @@ export default function SalesDashboard() {
         </Panel>
         <Panel
           title="My Tasks"
-          action={<span className="view-link">View All</span>}
+          action={<span className={tw.viewLink}>View All</span>}
         >
-          <div className="panel-pad">
+          <div className={tw.panelPad}>
             {d.tasks.length ? (
               d.tasks.map((t) => (
-                <div className="kpi-line" key={t._id}>
+                <div className={tw.kpiLine} key={t._id}>
                   <div>
-                    <b>{t.leadTitle}</b>
-                    <div className="tiny muted">
+                    <b className={tw.kpiLineB}>{t.leadTitle}</b>
+                    <div className={`${tw.text.tiny} ${tw.text.muted}`}>
                       Follow-up {dateFmt(t.nextFollowUpDate)}
                     </div>
                   </div>
@@ -207,37 +214,37 @@ export default function SalesDashboard() {
                 </div>
               ))
             ) : (
-              <div className="empty">No pending follow-ups.</div>
+              <div className={tw.empty}>No pending follow-ups.</div>
             )}
           </div>
         </Panel>
       </div>
-      <div className="dashboard-grid two">
+      <div className={tw.dashboardGridTwo}>
         <Panel
           title="Recent Activities"
-          action={<span className="view-link">View All</span>}
+          action={<span className={tw.viewLink}>View All</span>}
         >
-          <div className="table-wrap">
-            <table className="data-table">
+          <div className={tw.tableWrap}>
+            <table className={tw.dataTable}>
               <thead>
                 <tr>
-                  <th>Activity</th>
-                  <th>Module</th>
-                  <th>Type</th>
-                  <th>Date</th>
+                  <th className={tw.th}>Activity</th>
+                  <th className={tw.th}>Module</th>
+                  <th className={tw.th}>Type</th>
+                  <th className={tw.th}>Date</th>
                 </tr>
               </thead>
               <tbody>
                 {d.recentActivities.map((a) => (
-                  <tr key={a._id}>
-                    <td>
-                      <strong>{a.description}</strong>
+                  <tr key={a._id} className={tw.tr}>
+                    <td className={tw.td}>
+                      <strong className={tw.tdStrong}>{a.description}</strong>
                     </td>
-                    <td>{a.module}</td>
-                    <td>
+                    <td className={tw.td}>{a.module}</td>
+                    <td className={tw.td}>
                       <Badge>{a.action.replaceAll("_", " ")}</Badge>
                     </td>
-                    <td>{dateFmt(a.createdAt)}</td>
+                    <td className={tw.td}>{dateFmt(a.createdAt)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -246,25 +253,25 @@ export default function SalesDashboard() {
         </Panel>
         <Panel
           title="Top Vendors"
-          action={<span className="view-link">View All</span>}
+          action={<span className={tw.viewLink}>View All</span>}
         >
-          <div className="table-wrap">
-            <table className="data-table" style={{ minWidth: 480 }}>
+          <div className={tw.tableWrap}>
+            <table className={tw.dataTable} style={{ minWidth: 480 }}>
               <thead>
                 <tr>
-                  <th>Vendor</th>
-                  <th>Total Sales</th>
-                  <th>Total Value</th>
+                  <th className={tw.th}>Vendor</th>
+                  <th className={tw.th}>Total Sales</th>
+                  <th className={tw.th}>Total Value</th>
                 </tr>
               </thead>
               <tbody>
                 {d.topVendors.map((v, i) => (
-                  <tr key={i}>
-                    <td>
-                      <strong>{v.vendor}</strong>
+                  <tr key={i} className={tw.tr}>
+                    <td className={tw.td}>
+                      <strong className={tw.tdStrong}>{v.vendor}</strong>
                     </td>
-                    <td>{v.totalSales}</td>
-                    <td>{money(v.totalValue)}</td>
+                    <td className={tw.td}>{v.totalSales}</td>
+                    <td className={tw.td}>{money(v.totalValue)}</td>
                   </tr>
                 ))}
               </tbody>

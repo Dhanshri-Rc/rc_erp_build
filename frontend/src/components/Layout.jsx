@@ -130,6 +130,17 @@ const roleLabel = {
   sales: "Marketing User",
   finance: "Accounting User",
 };
+
+const sidebarBase =
+  "fixed z-50 inset-y-0 left-0 w-[224px] max-[1200px]:w-[205px] bg-white border-r border-[#eceef5] flex flex-col transition-transform duration-[250ms] max-[900px]:shadow-[12px_0_30px_rgba(29,34,60,0.12)] max-[900px]:-translate-x-full";
+const sidebarOpen = "max-[900px]:translate-x-0";
+const navItemBase =
+  "flex items-center gap-[10px] h-9 px-[10px] rounded-[6px] text-[#5f687b] my-[2px] text-[10px] transition-all duration-200 hover:bg-[#f7f5ff] hover:text-[#613ef0] hover:translate-x-[2px] [&>svg]:w-[15px] [&>svg]:h-[15px]";
+const navItemActive =
+  "bg-rc-grad text-white shadow-[0_5px_12px_rgba(105,75,232,0.18)] hover:translate-x-0 hover:bg-rc-grad hover:text-white";
+const iconBtn =
+  "w-8 h-8 border-0 bg-white rounded-full grid place-items-center text-[#70798e] relative transition-colors duration-200 hover:bg-[#f6f3ff] hover:text-[#6d49ef] [&>svg]:w-[15px]";
+
 export default function Layout() {
   const { user, logout } = useAuth();
   const nav = useNavigate(),
@@ -158,25 +169,32 @@ export default function Layout() {
     }));
   };
   return (
-    <div className="shell">
+    <div className="min-h-screen">
       <div
-        className={`overlay ${open ? "show" : ""}`}
+        className={
+          open
+            ? "hidden max-[900px]:block fixed inset-0 bg-[rgba(24,29,47,0.3)] z-[45]"
+            : "hidden"
+        }
         onClick={() => setOpen(false)}
       />
-      <aside className={`sidebar ${open ? "open" : ""}`}>
-        <div className="sidebar-head">
-          <div className="side-logo">
-            <img src="/rc-logo.png" /> RC ERP
+      <aside className={`${sidebarBase} ${open ? sidebarOpen : ""}`}>
+        <div className="h-[72px] flex items-center px-[19px] border-b border-[#f0f1f6]">
+          <div className="flex items-center gap-[7px] font-bold text-[13px]">
+            <img className="w-8 h-[30px] object-cover" src="/rc-logo.png" /> RC
+            ERP
           </div>
         </div>
-        <div className="side-scroll">
+        <div className="flex-1 overflow-auto py-[11px] px-[10px]">
           {sections[user.role].map(([group, items]) => (
             <div key={group}>
-              <div className="nav-group">{group}</div>
+              <div className="text-[8px] font-semibold text-[#afb5c4] tracking-[0.08em] mt-4 mx-[9px] mb-2">
+                {group}
+              </div>
               {items.map(([label, to, Icon]) => (
                 <NavLink
                   className={({ isActive }) =>
-                    `nav-item ${isActive ? "active" : ""}`
+                    `${navItemBase} ${isActive ? navItemActive : ""}`
                   }
                   to={to}
                   key={to}
@@ -189,33 +207,33 @@ export default function Layout() {
           ))}
         </div>
         <button
-          className="sidebar-profile"
+          className="mx-[11px] mb-[15px] mt-2 p-[10px] border-t border-[#eff0f5] flex items-center gap-2 bg-transparent border-x-0 border-b-0 text-left w-[calc(100%-22px)]"
           onClick={signout}
-          style={{
-            background: "none",
-            border: 0,
-            width: "calc(100% - 22px)",
-            textAlign: "left",
-          }}
         >
-          <div className="avatar">{initials(user.fullName)}</div>
-          <div className="profile-text">
-            <b>{user.fullName}</b>
-            <span>{roleLabel[user.role]}</span>
+          <div className="w-[30px] h-[30px] rounded-full inline-flex items-center justify-center bg-[#ede8ff] text-rc-purple font-bold text-[10px] flex-none">
+            {initials(user.fullName)}
+          </div>
+          <div className="min-w-0 flex-1">
+            <b className="text-[9px] block whitespace-nowrap overflow-hidden text-ellipsis">
+              {user.fullName}
+            </b>
+            <span className="text-[7.5px] text-[#9aa1b1] block mt-[2px]">
+              {roleLabel[user.role]}
+            </span>
           </div>
           <ChevronDown size={12} />
         </button>
       </aside>
-      <main className="main">
-        <header className="topbar">
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+      <main className="ml-[224px] min-h-screen max-[1200px]:ml-[205px] max-[900px]:ml-0">
+        <header className="h-16 bg-white border-b border-[#eceef5] flex items-center justify-between px-6 sticky top-0 z-[35] max-[900px]:px-4 max-[680px]:h-[58px]">
+          <div className="flex items-center gap-3">
             <button
-              className="menu-toggle icon-btn"
+              className={`hidden max-[900px]:grid max-[900px]:place-items-center border-0 bg-transparent text-[#6b7385] w-8 h-8 rounded-full`}
               onClick={() => setOpen(!open)}
             >
               {open ? <X /> : <Menu />}
             </button>
-            <div className="crumbs">
+            <div className="flex items-center gap-[7px] text-[9px] text-[#8d94a5] max-[680px]:hidden">
               <span>Dashboard</span>
               <span>›</span>
               <span>
@@ -227,11 +245,13 @@ export default function Layout() {
               </span>
             </div>
           </div>
-          <div className="top-actions">
-            <div style={{ position: "relative" }}>
-              <button className="icon-btn" onClick={() => setDrop(!drop)}>
+          <div className="flex items-center gap-[13px] max-[390px]:gap-1">
+            <div className="relative">
+              <button className={iconBtn} onClick={() => setDrop(!drop)}>
                 <Bell />
-                {notifications.unread > 0 && <span className="notify-dot" />}
+                {notifications.unread > 0 && (
+                  <span className="absolute right-[5px] top-[5px] w-[6px] h-[6px] bg-rc-purple rounded-full border border-white" />
+                )}
               </button>
               <AnimatePresence>
                 {drop && (
@@ -239,11 +259,14 @@ export default function Layout() {
                     initial={{ opacity: 0, y: -4 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -4 }}
-                    className="dropdown"
+                    className="absolute right-0 top-[41px] w-[320px] bg-white border border-[#e8eaf1] rounded-[9px] shadow-[0_15px_40px_rgba(34,40,74,0.12)] overflow-hidden z-[80] max-[680px]:fixed max-[680px]:left-3 max-[680px]:right-3 max-[680px]:top-[62px] max-[680px]:w-auto"
                   >
-                    <div className="dropdown-head">
+                    <div className="px-[14px] py-3 border-b border-[#eef0f4] flex justify-between items-center text-[9px] font-bold">
                       <span>Notifications ({notifications.unread})</span>
-                      <button className="link-btn" onClick={markAll}>
+                      <button
+                        className="border-0 bg-transparent text-[#6538f3] p-0"
+                        onClick={markAll}
+                      >
                         Mark all read
                       </button>
                     </div>
@@ -251,39 +274,47 @@ export default function Layout() {
                       notifications.items.slice(0, 7).map((n) => (
                         <div
                           key={n._id}
-                          className={`notify-item ${n.read ? "" : "unread"}`}
+                          className={`px-[13px] py-[11px] border-b border-[#f2f3f6] flex gap-2 bg-white last:border-b-0 ${n.read ? "" : "bg-[#fbf9ff]"}`}
                         >
                           <Bell size={13} color="#7450ef" />
                           <div>
-                            <b>{n.title}</b>
-                            <p>{n.message}</p>
-                            <time>
+                            <b className="text-[8px]">{n.title}</b>
+                            <p className="text-[7.5px] text-[#838b9e] my-[3px]">
+                              {n.message}
+                            </p>
+                            <time className="text-[6.5px] text-[#adb2bf]">
                               {new Date(n.createdAt).toLocaleString()}
                             </time>
                           </div>
                         </div>
                       ))
                     ) : (
-                      <div className="empty">You're all caught up.</div>
+                      <div className="p-[30px] text-center text-[#9aa0ae] text-[9px]">
+                        You're all caught up.
+                      </div>
                     )}
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
-            <button className="icon-btn">
+            <button className={iconBtn}>
               <CircleHelp />
             </button>
-            <div className="top-profile">
-              <div className="top-avatar">{initials(user.fullName)}</div>
-              <div className="profile-text">
-                <b>{user.fullName}</b>
-                <span>{roleLabel[user.role]}</span>
+            <div className="flex items-center gap-2 pl-1">
+              <div className="w-7 h-7 rounded-full bg-[#f0ebff] text-[#7250ef] grid place-items-center font-bold text-[9px] border border-[#e1d8ff]">
+                {initials(user.fullName)}
+              </div>
+              <div className="min-w-0 flex-1 max-[680px]:hidden">
+                <b className="text-[9px] block">{user.fullName}</b>
+                <span className="text-[7.5px] text-[#9aa1b1] block">
+                  {roleLabel[user.role]}
+                </span>
               </div>
               <ChevronDown size={11} />
             </div>
           </div>
         </header>
-        <div className="content">
+        <div className="px-[26px] pt-[21px] pb-7 max-w-[1500px] mx-auto max-[1200px]:p-[18px] max-[900px]:p-4 max-[680px]:px-3 max-[680px]:py-[13px]">
           <Outlet />
         </div>
       </main>

@@ -29,6 +29,7 @@ import {
   dateFmt,
   money,
 } from "../../components/UI";
+import * as tw from "../../styles/tw";
 
 const pieColors = ["#6f4cf4", "#14b6bf", "#8aa2e8"];
 export default function AdminDashboard() {
@@ -63,18 +64,18 @@ export default function AdminDashboard() {
   ];
   return (
     <>
-      <div className="page-head">
-        <div className="page-title">
-          <h1>Admin Dashboard</h1>
-          <p>Overview of system activities and operations</p>
+      <div className={tw.pageHead}>
+        <div>
+          <h1 className={tw.pageTitleH1}>Admin Dashboard</h1>
+          <p className={tw.pageTitleP}>Overview of system activities and operations</p>
         </div>
-        <div className="head-actions">
-          <button className="date-btn">
+        <div className={tw.headActions}>
+          <button className={tw.button.date}>
             <CalendarDays size={12} /> 01 Aug 2026 - 31 Aug 2026
           </button>
         </div>
       </div>
-      <div className="stats-grid">
+      <div className={tw.statsGrid}>
         <StatCard
           label="Total Users"
           value={m.totalUsers}
@@ -109,12 +110,12 @@ export default function AdminDashboard() {
           icon={Calculator}
         />
       </div>
-      <div className="dashboard-grid">
+      <div className={tw.dashboardGrid}>
         <Panel
           title="Users by Role"
-          action={<span className="view-link">View All</span>}
+          action={<span className={tw.viewLink}>View All</span>}
         >
-          <div className="donut-wrap">
+          <div className={tw.donutWrap}>
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -135,26 +136,28 @@ export default function AdminDashboard() {
         </Panel>
         <Panel
           title="Recent User Registrations"
-          action={<span className="view-link">View All</span>}
+          action={<span className={tw.viewLink}>View All</span>}
         >
-          <div className="table-wrap">
-            <table className="data-table" style={{ minWidth: 420 }}>
+          <div className={tw.tableWrap}>
+            <table className={tw.dataTable} style={{ minWidth: 420 }}>
               <thead>
                 <tr>
-                  <th>Name</th>
-                  <th>Role</th>
-                  <th>Registered On</th>
-                  <th>Status</th>
+                  <th className={tw.th}>Name</th>
+                  <th className={tw.th}>Role</th>
+                  <th className={tw.th}>Registered On</th>
+                  <th className={tw.th}>Status</th>
                 </tr>
               </thead>
               <tbody>
                 {data.recentUsers.map((u) => (
-                  <tr key={u._id}>
-                    <td>
-                      <strong>{u.fullName}</strong>
-                      <div className="tiny muted">@{u.username}</div>
+                  <tr key={u._id} className={tw.tr}>
+                    <td className={tw.td}>
+                      <strong className={tw.tdStrong}>{u.fullName}</strong>
+                      <div className={`${tw.text.tiny} ${tw.text.muted}`}>
+                        @{u.username}
+                      </div>
                     </td>
-                    <td>
+                    <td className={tw.td}>
                       <Badge>
                         {u.role === "sales"
                           ? "Marketing"
@@ -163,8 +166,8 @@ export default function AdminDashboard() {
                             : "Admin"}
                       </Badge>
                     </td>
-                    <td>{dateFmt(u.createdAt)}</td>
-                    <td>
+                    <td className={tw.td}>{dateFmt(u.createdAt)}</td>
+                    <td className={tw.td}>
                       <Badge>{u.status}</Badge>
                     </td>
                   </tr>
@@ -175,9 +178,9 @@ export default function AdminDashboard() {
         </Panel>
         <Panel
           title="Accounting Log Overview"
-          action={<span className="view-link">View All</span>}
+          action={<span className={tw.viewLink}>View All</span>}
         >
-          <div className="chart-wrap">
+          <div className={tw.chartWrap}>
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chart}>
                 <defs>
@@ -207,47 +210,47 @@ export default function AdminDashboard() {
               </AreaChart>
             </ResponsiveContainer>
           </div>
-          <div className="panel-pad" style={{ paddingTop: 0 }}>
-            <div className="kpi-line">
+          <div className={tw.panelPad} style={{ paddingTop: 0 }}>
+            <div className={tw.kpiLine}>
               <span>Total Logs</span>
-              <b>{money(data.accountingOverview?.[0]?.value)}</b>
+              <b className={tw.kpiLineB}>{money(data.accountingOverview?.[0]?.value)}</b>
             </div>
-            <div className="kpi-line">
+            <div className={tw.kpiLine}>
               <span>Verified Logs</span>
-              <b>{money(data.accountingOverview?.[1]?.value)}</b>
+              <b className={tw.kpiLineB}>{money(data.accountingOverview?.[1]?.value)}</b>
             </div>
           </div>
         </Panel>
       </div>
-      <div className="dashboard-grid two">
+      <div className={tw.dashboardGridTwo}>
         <Panel
           title="Vendors by Employee (Top 5)"
           action={
-            <span className="view-link">View all vendors by employee →</span>
+            <span className={tw.viewLink}>View all vendors by employee →</span>
           }
         >
-          <div className="table-wrap">
-            <table className="data-table">
+          <div className={tw.tableWrap}>
+            <table className={tw.dataTable}>
               <thead>
                 <tr>
-                  <th>Employee</th>
-                  <th>Total Vendors</th>
-                  <th>Active Vendors</th>
-                  <th>Inactive Vendors</th>
-                  <th>Action</th>
+                  <th className={tw.th}>Employee</th>
+                  <th className={tw.th}>Total Vendors</th>
+                  <th className={tw.th}>Active Vendors</th>
+                  <th className={tw.th}>Inactive Vendors</th>
+                  <th className={tw.th}>Action</th>
                 </tr>
               </thead>
               <tbody>
                 {data.vendorByEmployee.map((v, i) => (
-                  <tr key={i}>
-                    <td>
-                      <strong>{v.employee}</strong>
+                  <tr key={i} className={tw.tr}>
+                    <td className={tw.td}>
+                      <strong className={tw.tdStrong}>{v.employee}</strong>
                     </td>
-                    <td>{v.total}</td>
-                    <td>{v.active}</td>
-                    <td>{v.inactive}</td>
-                    <td>
-                      <button className="action-link">View</button>
+                    <td className={tw.td}>{v.total}</td>
+                    <td className={tw.td}>{v.active}</td>
+                    <td className={tw.td}>{v.inactive}</td>
+                    <td className={tw.td}>
+                      <button className={tw.actionLink}>View</button>
                     </td>
                   </tr>
                 ))}
@@ -257,27 +260,27 @@ export default function AdminDashboard() {
         </Panel>
         <Panel
           title="Recent Accounting Logs"
-          action={<span className="view-link">View All</span>}
+          action={<span className={tw.viewLink}>View All</span>}
         >
-          <div className="table-wrap">
-            <table className="data-table">
+          <div className={tw.tableWrap}>
+            <table className={tw.dataTable}>
               <thead>
                 <tr>
-                  <th>Date & Time</th>
-                  <th>Employee</th>
-                  <th>Reference</th>
-                  <th>Amount</th>
-                  <th>Status</th>
+                  <th className={tw.th}>Date & Time</th>
+                  <th className={tw.th}>Employee</th>
+                  <th className={tw.th}>Reference</th>
+                  <th className={tw.th}>Amount</th>
+                  <th className={tw.th}>Status</th>
                 </tr>
               </thead>
               <tbody>
                 {data.recentPayments.map((p) => (
-                  <tr key={p._id}>
-                    <td>{dateFmt(p.createdAt)}</td>
-                    <td>{p.submittedBy?.fullName || "—"}</td>
-                    <td>{p.paymentNo}</td>
-                    <td>{money(p.amount)}</td>
-                    <td>
+                  <tr key={p._id} className={tw.tr}>
+                    <td className={tw.td}>{dateFmt(p.createdAt)}</td>
+                    <td className={tw.td}>{p.submittedBy?.fullName || "—"}</td>
+                    <td className={tw.td}>{p.paymentNo}</td>
+                    <td className={tw.td}>{money(p.amount)}</td>
+                    <td className={tw.td}>
                       <Badge>{p.status}</Badge>
                     </td>
                   </tr>
