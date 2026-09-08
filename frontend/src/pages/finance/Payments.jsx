@@ -10,6 +10,7 @@ import {
   dateFmt,
   money,
 } from "../../components/UI";
+import * as tw from "../../styles/tw";
 
 export default function Payments({ admin = false }) {
   const [items, setItems] = useState([]),
@@ -43,10 +44,10 @@ export default function Payments({ admin = false }) {
   };
   return (
     <>
-      <div className="page-head">
-        <div className="page-title">
-          <h1>Payment Verification</h1>
-          <p>
+      <div className={tw.pageHead}>
+        <div>
+          <h1 className={tw.pageTitleH1}>Payment Verification</h1>
+          <p className={tw.pageTitleP}>
             Review submitted sales payments, verify proof and generate receipt
             records.
           </p>
@@ -64,9 +65,9 @@ export default function Payments({ admin = false }) {
           Export
         </Button>
       </div>
-      <div className="toolbar">
+      <div className={tw.toolbar}>
         <select
-          className="compact-select"
+          className={tw.compactSelect}
           value={status}
           onChange={(e) => {
             setStatus(e.target.value);
@@ -79,49 +80,51 @@ export default function Payments({ admin = false }) {
           <option value="rejected">Rejected</option>
         </select>
       </div>
-      <div className="panel">
-        <div className="table-wrap">
-          <table className="data-table">
+      <div className={tw.panel}>
+        <div className={tw.tableWrap}>
+          <table className={tw.dataTable}>
             <thead>
               <tr>
-                <th>Payment Ref</th>
-                <th>Service</th>
-                <th>Vendor</th>
-                <th>Submitted By</th>
-                <th>Amount</th>
-                <th>Transaction ID</th>
-                <th>Transaction Date</th>
-                <th>Status</th>
-                <th>Actions</th>
+                <th className={tw.th}>Payment Ref</th>
+                <th className={tw.th}>Service</th>
+                <th className={tw.th}>Vendor</th>
+                <th className={tw.th}>Submitted By</th>
+                <th className={tw.th}>Amount</th>
+                <th className={tw.th}>Transaction ID</th>
+                <th className={tw.th}>Transaction Date</th>
+                <th className={tw.th}>Status</th>
+                <th className={tw.th}>Actions</th>
               </tr>
             </thead>
             <tbody>
               {items.map((p) => (
-                <tr key={p._id}>
-                  <td>
-                    <strong>{p.paymentNo}</strong>
+                <tr key={p._id} className={tw.tr}>
+                  <td className={tw.td}>
+                    <strong className={tw.tdStrong}>{p.paymentNo}</strong>
                   </td>
-                  <td>{p.sourceType}</td>
-                  <td>{p.vendor?.vendorName}</td>
-                  <td>{p.submittedBy?.fullName}</td>
-                  <td>{money(p.amount)}</td>
-                  <td>{p.transactionId || "—"}</td>
-                  <td>{dateFmt(p.transactionDate || p.createdAt)}</td>
-                  <td>
+                  <td className={tw.td}>{p.sourceType}</td>
+                  <td className={tw.td}>{p.vendor?.vendorName}</td>
+                  <td className={tw.td}>{p.submittedBy?.fullName}</td>
+                  <td className={tw.td}>{money(p.amount)}</td>
+                  <td className={tw.td}>{p.transactionId || "—"}</td>
+                  <td className={tw.td}>{dateFmt(p.transactionDate || p.createdAt)}</td>
+                  <td className={tw.td}>
                     <Badge>{p.status}</Badge>
                   </td>
-                  <td>
+                  <td className={tw.td}>
                     {p.status === "pending" ? (
-                      <div className="inline-actions">
+                      <div className={tw.inlineActions}>
                         <button
-                          className="action-link"
+                          className={tw.actionLink}
                           onClick={() => setSelected(p)}
                         >
                           <Eye size={10} /> Review
                         </button>
                       </div>
                     ) : (
-                      <span className="muted tiny">Processed</span>
+                      <span className={`${tw.text.muted} ${tw.text.tiny}`}>
+                        Processed
+                      </span>
                     )}
                   </td>
                 </tr>
@@ -136,30 +139,34 @@ export default function Payments({ admin = false }) {
           title={`Verify ${selected.paymentNo}`}
           onClose={() => setSelected(null)}
         >
-          <div className="summary-list">
-            <div className="summary-line">
-              <span>Vendor</span>
-              <strong>{selected.vendor?.vendorName}</strong>
-            </div>
-            <div className="summary-line">
-              <span>Amount</span>
-              <strong className="summary-total">
-                {money(selected.amount)}
+          <div className={tw.summaryList}>
+            <div className={tw.summaryLine}>
+              <span className={tw.summaryLineSpan}>Vendor</span>
+              <strong className={tw.summaryLineStrong}>
+                {selected.vendor?.vendorName}
               </strong>
             </div>
-            <div className="summary-line">
-              <span>Transaction</span>
-              <strong>{selected.transactionId || "—"}</strong>
+            <div className={tw.summaryLine}>
+              <span className={tw.summaryLineSpan}>Amount</span>
+              <strong className={tw.summaryTotal}>{money(selected.amount)}</strong>
             </div>
-            <div className="summary-line">
-              <span>Mode</span>
-              <strong>{selected.paymentMode || "—"}</strong>
+            <div className={tw.summaryLine}>
+              <span className={tw.summaryLineSpan}>Transaction</span>
+              <strong className={tw.summaryLineStrong}>
+                {selected.transactionId || "—"}
+              </strong>
+            </div>
+            <div className={tw.summaryLine}>
+              <span className={tw.summaryLineSpan}>Mode</span>
+              <strong className={tw.summaryLineStrong}>
+                {selected.paymentMode || "—"}
+              </strong>
             </div>
           </div>
           {selected.proof && (
-            <p className="small">
+            <p className={`${tw.text.small} mt-2`}>
               <a
-                className="view-link"
+                className={tw.viewLink}
                 target="_blank"
                 rel="noreferrer"
                 href={`${(import.meta.env.VITE_API_URL || "http://localhost:5000/api").replace("/api", "")}/${selected.proof.replaceAll("\\", "/")}`}
@@ -169,12 +176,12 @@ export default function Payments({ admin = false }) {
             </p>
           )}
           <textarea
-            className="textarea"
+            className={`${tw.textarea} mt-2`}
             placeholder="Verification notes"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
           />
-          <div className="form-actions">
+          <div className={tw.formActions}>
             <Button kind="danger" icon={XCircle} onClick={() => act("reject")}>
               Reject
             </Button>

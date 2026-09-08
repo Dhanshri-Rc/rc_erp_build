@@ -22,7 +22,12 @@ import Placeholder from "./pages/common/Placeholder";
 
 function RootRedirect() {
   const { user, loading } = useAuth();
-  if (loading) return <div className="empty">Loading RC ERP…</div>;
+  if (loading)
+    return (
+      <div className="p-[30px] text-center text-[#9aa0ae] text-[9px]">
+        Loading RC ERP…
+      </div>
+    );
   return <Navigate to={user ? dashboardFor(user.role) : "/login"} replace />;
 }
 export default function App() {

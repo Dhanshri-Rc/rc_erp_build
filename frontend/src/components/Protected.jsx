@@ -3,7 +3,11 @@ import { useAuth, dashboardFor } from "../context/AuthContext";
 export function Protected() {
   const { user, loading } = useAuth();
   if (loading)
-    return <div className="empty">Restoring secure RC ERP session…</div>;
+    return (
+      <div className="p-[30px] text-center text-[#9aa0ae] text-[9px]">
+        Restoring secure RC ERP session…
+      </div>
+    );
   return user ? <Outlet /> : <Navigate to="/login" replace />;
 }
 export function RoleOnly({ role }) {

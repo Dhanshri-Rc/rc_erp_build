@@ -10,6 +10,7 @@ import {
   Toast,
   money,
 } from "../../components/UI";
+import * as tw from "../../styles/tw";
 
 export default function Publication() {
   const [catalog, setCatalog] = useState({
@@ -101,20 +102,20 @@ export default function Publication() {
   const vendor = catalog.vendors.find((v) => v._id === f.vendor);
   return (
     <>
-      <div className="page-head">
-        <div className="page-title">
-          <h1>New Paper Publication Service</h1>
-          <p>
+      <div className={tw.pageHead}>
+        <div>
+          <h1 className={tw.pageTitleH1}>New Paper Publication Service</h1>
+          <p className={tw.pageTitleP}>
             Create a direct paper publication service and capture complete
             payment details.
           </p>
         </div>
       </div>
-      <div className="form-layout">
+      <div className={tw.formLayout}>
         <form onSubmit={submit}>
-          <div className="form-card">
-            <h3>1. Publication Details</h3>
-            <div className="form-grid">
+          <div className={tw.formCard}>
+            <h3 className={tw.formCardH3}>1. Publication Details</h3>
+            <div className={tw.formGrid}>
               <Field label="Journal Name" required>
                 <Select
                   value={f.journal}
@@ -159,9 +160,9 @@ export default function Publication() {
               </Field>
             </div>
           </div>
-          <div className="form-card">
-            <h3>2. Vendor Details</h3>
-            <div className="form-grid">
+          <div className={tw.formCard}>
+            <h3 className={tw.formCardH3}>2. Vendor Details</h3>
+            <div className={tw.formGrid}>
               <Field label="Select Vendor" required>
                 <Select
                   value={f.vendor}
@@ -186,9 +187,9 @@ export default function Publication() {
               </Field>
             </div>
           </div>
-          <div className="form-card">
-            <h3>3. Publication & Pricing</h3>
-            <div className="form-grid three">
+          <div className={tw.formCard}>
+            <h3 className={tw.formCardH3}>3. Publication & Pricing</h3>
+            <div className={tw.formGridThree}>
               <Field label="Author Category / Region" required>
                 <Select
                   value={f.authorCategory}
@@ -238,9 +239,9 @@ export default function Publication() {
               </Field>
             </div>
           </div>
-          <div className="form-card">
-            <h3>4. Payment Information</h3>
-            <div className="form-grid three">
+          <div className={tw.formCard}>
+            <h3 className={tw.formCardH3}>4. Payment Information</h3>
+            <div className={tw.formGridThree}>
               <Field label="Payment Account" required>
                 <Select
                   value={f.paymentAccount}
@@ -276,7 +277,7 @@ export default function Publication() {
                 />
               </Field>
               <Field label="Payment Screenshot / Proof" className="full">
-                <label className="file-drop">
+                <label className={tw.fileDrop}>
                   <div>
                     <Upload size={17} />
                     <div>
@@ -293,9 +294,9 @@ export default function Publication() {
               </Field>
             </div>
           </div>
-          <div className="form-card">
-            <h3>5. Additional Information</h3>
-            <div className="form-grid three">
+          <div className={tw.formCard}>
+            <h3 className={tw.formCardH3}>5. Additional Information</h3>
+            <div className={tw.formGridThree}>
               <Field label="Expected Publication Date">
                 <Input
                   type="date"
@@ -338,15 +339,15 @@ export default function Publication() {
               </Field>
             </div>
           </div>
-          <div className="form-card">
-            <h3>6. Remarks & Notes</h3>
+          <div className={tw.formCard}>
+            <h3 className={tw.formCardH3}>6. Remarks & Notes</h3>
             <Field label="Remarks">
               <Textarea
                 value={f.remarks}
                 onChange={(e) => set("remarks", e.target.value)}
               />
             </Field>
-            <div className="form-actions">
+            <div className={tw.formActions}>
               <Button kind="secondary">Cancel</Button>
               <Button type="submit" icon={Save} disabled={busy}>
                 {busy ? "Saving…" : "Save Publication Service"}
@@ -354,47 +355,49 @@ export default function Publication() {
             </div>
           </div>
         </form>
-        <aside className="side-info">
-          <div className="info-card purple">
-            <h4>Publication Summary</h4>
-            <div className="summary-list">
-              <div className="summary-line">
-                <span>Journal</span>
-                <strong>
+        <aside className={tw.sideInfo}>
+          <div className={tw.infoCard.purple}>
+            <h4 className={tw.infoCardH4}>Publication Summary</h4>
+            <div className={tw.summaryList}>
+              <div className={tw.summaryLine}>
+                <span className={tw.summaryLineSpan}>Journal</span>
+                <strong className={tw.summaryLineStrong}>
                   {catalog.journals.find((j) => j._id === f.journal)
                     ?.shortName || "—"}
                 </strong>
               </div>
-              <div className="summary-line">
-                <span>Vendor</span>
-                <strong>{vendor?.vendorName || "—"}</strong>
+              <div className={tw.summaryLine}>
+                <span className={tw.summaryLineSpan}>Vendor</span>
+                <strong className={tw.summaryLineStrong}>
+                  {vendor?.vendorName || "—"}
+                </strong>
               </div>
-              <div className="summary-line">
-                <span>Authors</span>
-                <strong>{f.numberOfAuthors}</strong>
+              <div className={tw.summaryLine}>
+                <span className={tw.summaryLineSpan}>Authors</span>
+                <strong className={tw.summaryLineStrong}>{f.numberOfAuthors}</strong>
               </div>
-              <div className="summary-line">
-                <span>Total</span>
-                <strong>{money(f.totalAmount)}</strong>
+              <div className={tw.summaryLine}>
+                <span className={tw.summaryLineSpan}>Total</span>
+                <strong className={tw.summaryLineStrong}>{money(f.totalAmount)}</strong>
               </div>
-              <div className="summary-line">
-                <span>Advance</span>
-                <strong>{money(f.advanceAmount)}</strong>
+              <div className={tw.summaryLine}>
+                <span className={tw.summaryLineSpan}>Advance</span>
+                <strong className={tw.summaryLineStrong}>{money(f.advanceAmount)}</strong>
               </div>
-              <div className="summary-line">
-                <span>Remaining</span>
-                <strong className="summary-total">{money(remaining)}</strong>
+              <div className={tw.summaryLine}>
+                <span className={tw.summaryLineSpan}>Remaining</span>
+                <strong className={tw.summaryTotal}>{money(remaining)}</strong>
               </div>
             </div>
           </div>
-          <div className="info-card blue">
-            <div className="info-row">
-              <div className="info-icon">
+          <div className={tw.infoCard.blue}>
+            <div className={tw.infoRow}>
+              <div className={tw.infoIcon}>
                 <Info />
               </div>
               <div>
-                <b>Payment Verification</b>
-                <p>
+                <b className={tw.infoRowB}>Payment Verification</b>
+                <p className={tw.infoRowP}>
                   Advance payments automatically appear in the Finance
                   payment-verification queue.
                 </p>

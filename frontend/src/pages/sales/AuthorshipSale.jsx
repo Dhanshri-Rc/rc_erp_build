@@ -18,6 +18,7 @@ import {
   Toast,
   money,
 } from "../../components/UI";
+import * as tw from "../../styles/tw";
 
 export default function AuthorshipSale() {
   const [catalog, setCatalog] = useState({
@@ -118,20 +119,20 @@ export default function AuthorshipSale() {
   };
   return (
     <>
-      <div className="page-head">
-        <div className="page-title">
-          <h1>New Authorship Sale</h1>
-          <p>
+      <div className={tw.pageHead}>
+        <div>
+          <h1 className={tw.pageTitleH1}>New Authorship Sale</h1>
+          <p className={tw.pageTitleP}>
             Create and record a new authorship sale with vendor, article, author
             and payment information.
           </p>
         </div>
       </div>
-      <div className="form-layout">
+      <div className={tw.formLayout}>
         <form onSubmit={submit}>
-          <div className="form-card">
-            <h3>1. Select Journal</h3>
-            <div className="form-grid">
+          <div className={tw.formCard}>
+            <h3 className={tw.formCardH3}>1. Select Journal</h3>
+            <div className={tw.formGrid}>
               <Field label="Journal Name" required className="full">
                 <Select
                   value={f.journal}
@@ -147,9 +148,9 @@ export default function AuthorshipSale() {
               </Field>
             </div>
           </div>
-          <div className="form-card">
-            <h3>2. Select Article</h3>
-            <div className="form-grid">
+          <div className={tw.formCard}>
+            <h3 className={tw.formCardH3}>2. Select Article</h3>
+            <div className={tw.formGrid}>
               <Field label="Article" required>
                 <Select
                   value={f.article}
@@ -168,9 +169,9 @@ export default function AuthorshipSale() {
               </Field>
             </div>
           </div>
-          <div className="form-card">
-            <h3>3. Vendor Details</h3>
-            <div className="form-grid">
+          <div className={tw.formCard}>
+            <h3 className={tw.formCardH3}>3. Vendor Details</h3>
+            <div className={tw.formGrid}>
               <Field label="Select Vendor" required>
                 <Select
                   value={f.vendor}
@@ -203,9 +204,9 @@ export default function AuthorshipSale() {
               </Field>
             </div>
           </div>
-          <div className="form-card">
-            <h3>4. Pricing Details</h3>
-            <div className="form-grid three">
+          <div className={tw.formCard}>
+            <h3 className={tw.formCardH3}>4. Pricing Details</h3>
+            <div className={tw.formGridThree}>
               <Field label="Total Price (₹)" required>
                 <Input
                   type="number"
@@ -233,8 +234,7 @@ export default function AuthorshipSale() {
                     setF((x) => ({
                       ...x,
                       numberOfAuthors: n,
-                      totalPrice:
-                        Number(x.pricePerAuthor || 0) * Number(n || 0),
+                      totalPrice: Number(x.pricePerAuthor || 0) * Number(n || 0),
                     }));
                   }}
                 />
@@ -253,8 +253,8 @@ export default function AuthorshipSale() {
               </Field>
             </div>
           </div>
-          <div className="form-card">
-            <h3>5. Author Details</h3>
+          <div className={tw.formCard}>
+            <h3 className={tw.formCardH3}>5. Author Details</h3>
             <Field label="Author Names & Affiliations" required>
               <Textarea
                 value={f.authors}
@@ -263,9 +263,9 @@ export default function AuthorshipSale() {
               />
             </Field>
           </div>
-          <div className="form-card">
-            <h3>6. Payment Information</h3>
-            <div className="form-grid three">
+          <div className={tw.formCard}>
+            <h3 className={tw.formCardH3}>6. Payment Information</h3>
+            <div className={tw.formGridThree}>
               <Field label="Payment Account" required>
                 <Select
                   value={f.paymentAccount}
@@ -301,7 +301,7 @@ export default function AuthorshipSale() {
                 />
               </Field>
               <Field label="Payment Screenshot / Proof" className="full">
-                <label className="file-drop">
+                <label className={tw.fileDrop}>
                   <div>
                     <Upload size={17} />
                     <div>
@@ -318,8 +318,8 @@ export default function AuthorshipSale() {
               </Field>
             </div>
           </div>
-          <div className="form-card">
-            <h3>7. Remarks</h3>
+          <div className={tw.formCard}>
+            <h3 className={tw.formCardH3}>7. Remarks</h3>
             <Field label="Remarks / Notes">
               <Textarea
                 value={f.remarks}
@@ -327,7 +327,7 @@ export default function AuthorshipSale() {
                 placeholder="Add notes for this transaction"
               />
             </Field>
-            <div className="form-actions">
+            <div className={tw.formActions}>
               <Button kind="secondary">Cancel</Button>
               <Button type="submit" icon={Save} disabled={busy}>
                 {busy ? "Saving…" : "Save Authorship Sale"}
@@ -335,47 +335,51 @@ export default function AuthorshipSale() {
             </div>
           </div>
         </form>
-        <aside className="side-info">
-          <div className="info-card purple">
-            <h4>Sale Summary</h4>
-            <div className="summary-list">
-              <div className="summary-line">
-                <span>Journal</span>
-                <strong>
+        <aside className={tw.sideInfo}>
+          <div className={tw.infoCard.purple}>
+            <h4 className={tw.infoCardH4}>Sale Summary</h4>
+            <div className={tw.summaryList}>
+              <div className={tw.summaryLine}>
+                <span className={tw.summaryLineSpan}>Journal</span>
+                <strong className={tw.summaryLineStrong}>
                   {catalog.journals.find((j) => j._id === f.journal)
                     ?.shortName || "—"}
                 </strong>
               </div>
-              <div className="summary-line">
-                <span>Available POS</span>
-                <strong>{selectedArticle?.availablePOS ?? "—"}</strong>
+              <div className={tw.summaryLine}>
+                <span className={tw.summaryLineSpan}>Available POS</span>
+                <strong className={tw.summaryLineStrong}>
+                  {selectedArticle?.availablePOS ?? "—"}
+                </strong>
               </div>
-              <div className="summary-line">
-                <span>Authors / POS</span>
-                <strong>{f.numberOfAuthors || 0}</strong>
+              <div className={tw.summaryLine}>
+                <span className={tw.summaryLineSpan}>Authors / POS</span>
+                <strong className={tw.summaryLineStrong}>
+                  {f.numberOfAuthors || 0}
+                </strong>
               </div>
-              <div className="summary-line">
-                <span>Total Price</span>
-                <strong>{money(f.totalPrice)}</strong>
+              <div className={tw.summaryLine}>
+                <span className={tw.summaryLineSpan}>Total Price</span>
+                <strong className={tw.summaryLineStrong}>{money(f.totalPrice)}</strong>
               </div>
-              <div className="summary-line">
-                <span>Advance</span>
-                <strong>{money(f.advancePayment)}</strong>
+              <div className={tw.summaryLine}>
+                <span className={tw.summaryLineSpan}>Advance</span>
+                <strong className={tw.summaryLineStrong}>{money(f.advancePayment)}</strong>
               </div>
-              <div className="summary-line">
-                <span>Remaining</span>
-                <strong className="summary-total">{money(remaining)}</strong>
+              <div className={tw.summaryLine}>
+                <span className={tw.summaryLineSpan}>Remaining</span>
+                <strong className={tw.summaryTotal}>{money(remaining)}</strong>
               </div>
             </div>
           </div>
-          <div className="info-card blue">
-            <div className="info-row">
-              <div className="info-icon">
+          <div className={tw.infoCard.blue}>
+            <div className={tw.infoRow}>
+              <div className={tw.infoIcon}>
                 <Info />
               </div>
               <div>
-                <b>Finance Workflow</b>
-                <p>
+                <b className={tw.infoRowB}>Finance Workflow</b>
+                <p className={tw.infoRowP}>
                   Any submitted advance creates a payment-verification record
                   for the Finance team. Article POS are reserved when the sale
                   is saved.

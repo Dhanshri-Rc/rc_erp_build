@@ -18,6 +18,7 @@ import {
   dateFmt,
   initials,
 } from "../../components/UI";
+import * as tw from "../../styles/tw";
 
 export default function AdminVendors({ byEmployee = false }) {
   const [items, setItems] = useState([]),
@@ -54,10 +55,12 @@ export default function AdminVendors({ byEmployee = false }) {
     inactive = items.filter((x) => x.status === "inactive").length;
   return (
     <>
-      <div className="page-head">
-        <div className="page-title">
-          <h1>{byEmployee ? "Vendors by Employee" : "All Vendors"}</h1>
-          <p>
+      <div className={tw.pageHead}>
+        <div>
+          <h1 className={tw.pageTitleH1}>
+            {byEmployee ? "Vendors by Employee" : "All Vendors"}
+          </h1>
+          <p className={tw.pageTitleP}>
             {byEmployee
               ? "View and manage vendors assigned to individual employees"
               : "View and manage all vendors across RC ERP"}
@@ -77,9 +80,9 @@ export default function AdminVendors({ byEmployee = false }) {
         </Button>
       </div>
       {byEmployee && (
-        <div className="toolbar">
+        <div className={tw.toolbar}>
           <select
-            className="compact-select"
+            className={tw.compactSelect}
             value={employee}
             onChange={(e) => setEmployee(e.target.value)}
           >
@@ -92,7 +95,7 @@ export default function AdminVendors({ byEmployee = false }) {
           </select>
         </div>
       )}
-      <div className="summary-strip">
+      <div className={tw.summaryStrip}>
         <StatCard label="Total Vendors" value={meta?.total || 0} icon={Store} />
         <StatCard
           label="Active Vendors"
@@ -122,14 +125,14 @@ export default function AdminVendors({ byEmployee = false }) {
           tone="blue"
         />
       </div>
-      <div className="toolbar">
+      <div className={tw.toolbar}>
         <SearchBox
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Search vendor by name, email or contact"
         />
         <select
-          className="compact-select"
+          className={tw.compactSelect}
           value={status}
           onChange={(e) => setStatus(e.target.value)}
         >
@@ -147,41 +150,41 @@ export default function AdminVendors({ byEmployee = false }) {
           Filter
         </Button>
       </div>
-      <div className="panel">
-        <div className="table-wrap">
-          <table className="data-table">
+      <div className={tw.panel}>
+        <div className={tw.tableWrap}>
+          <table className={tw.dataTable}>
             <thead>
               <tr>
-                <th>#</th>
-                <th>Vendor Name</th>
-                <th>Vendor Type</th>
-                <th>Contact Person</th>
-                <th>Email</th>
-                <th>Contact Number</th>
-                <th>Status</th>
-                <th>Added On</th>
-                <th>Added By</th>
-                <th>Actions</th>
+                <th className={tw.th}>#</th>
+                <th className={tw.th}>Vendor Name</th>
+                <th className={tw.th}>Vendor Type</th>
+                <th className={tw.th}>Contact Person</th>
+                <th className={tw.th}>Email</th>
+                <th className={tw.th}>Contact Number</th>
+                <th className={tw.th}>Status</th>
+                <th className={tw.th}>Added On</th>
+                <th className={tw.th}>Added By</th>
+                <th className={tw.th}>Actions</th>
               </tr>
             </thead>
             <tbody>
               {items.map((v, i) => (
-                <tr key={v._id}>
-                  <td>{(meta?.page - 1) * meta?.limit + i + 1}</td>
-                  <td>
-                    <strong>{v.vendorName}</strong>
+                <tr key={v._id} className={tw.tr}>
+                  <td className={tw.td}>{(meta?.page - 1) * meta?.limit + i + 1}</td>
+                  <td className={tw.td}>
+                    <strong className={tw.tdStrong}>{v.vendorName}</strong>
                   </td>
-                  <td>{v.businessType}</td>
-                  <td>{v.contactPerson || "—"}</td>
-                  <td>{v.email}</td>
-                  <td>{v.mobile}</td>
-                  <td>
+                  <td className={tw.td}>{v.businessType}</td>
+                  <td className={tw.td}>{v.contactPerson || "—"}</td>
+                  <td className={tw.td}>{v.email}</td>
+                  <td className={tw.td}>{v.mobile}</td>
+                  <td className={tw.td}>
                     <Badge>{v.status}</Badge>
                   </td>
-                  <td>{dateFmt(v.createdAt)}</td>
-                  <td>{v.assignedTo?.fullName || "—"}</td>
-                  <td>
-                    <button className="action-link">View</button>
+                  <td className={tw.td}>{dateFmt(v.createdAt)}</td>
+                  <td className={tw.td}>{v.assignedTo?.fullName || "—"}</td>
+                  <td className={tw.td}>
+                    <button className={tw.actionLink}>View</button>
                   </td>
                 </tr>
               ))}

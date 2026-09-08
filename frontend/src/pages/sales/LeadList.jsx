@@ -10,6 +10,8 @@ import {
   dateFmt,
   money,
 } from "../../components/UI";
+import * as tw from "../../styles/tw";
+
 export default function LeadList() {
   const [items, setItems] = useState([]),
     [meta, setMeta] = useState(null),
@@ -28,23 +30,25 @@ export default function LeadList() {
   }, [page, status]);
   return (
     <>
-      <div className="page-head">
-        <div className="page-title">
-          <h1>Leads & Follow-ups</h1>
-          <p>Track generated leads, discussions and next follow-up actions.</p>
+      <div className={tw.pageHead}>
+        <div>
+          <h1 className={tw.pageTitleH1}>Leads & Follow-ups</h1>
+          <p className={tw.pageTitleP}>
+            Track generated leads, discussions and next follow-up actions.
+          </p>
         </div>
         <Link to="/sales/leads/create">
           <Button icon={Plus}>Create Lead</Button>
         </Link>
       </div>
-      <div className="toolbar">
+      <div className={tw.toolbar}>
         <SearchBox
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Search lead, contact or organization"
         />
         <select
-          className="compact-select"
+          className={tw.compactSelect}
           value={status}
           onChange={(e) => setStatus(e.target.value)}
         >
@@ -67,34 +71,38 @@ export default function LeadList() {
           Filter
         </Button>
       </div>
-      <div className="panel">
-        <div className="table-wrap">
-          <table className="data-table">
+      <div className={tw.panel}>
+        <div className={tw.tableWrap}>
+          <table className={tw.dataTable}>
             <thead>
               <tr>
-                <th>Lead</th>
-                <th>Contact</th>
-                <th>Lead For</th>
-                <th>Budget</th>
-                <th>Priority</th>
-                <th>Status</th>
-                <th>Next Follow-up</th>
+                <th className={tw.th}>Lead</th>
+                <th className={tw.th}>Contact</th>
+                <th className={tw.th}>Lead For</th>
+                <th className={tw.th}>Budget</th>
+                <th className={tw.th}>Priority</th>
+                <th className={tw.th}>Status</th>
+                <th className={tw.th}>Next Follow-up</th>
               </tr>
             </thead>
             <tbody>
               {items.map((l) => (
-                <tr key={l._id}>
-                  <td>
-                    <strong>{l.leadTitle}</strong>
-                    <div className="tiny muted">{l.leadNo}</div>
+                <tr key={l._id} className={tw.tr}>
+                  <td className={tw.td}>
+                    <strong className={tw.tdStrong}>{l.leadTitle}</strong>
+                    <div className={`${tw.text.tiny} ${tw.text.muted}`}>
+                      {l.leadNo}
+                    </div>
                   </td>
-                  <td>
+                  <td className={tw.td}>
                     {l.contactName}
-                    <div className="tiny muted">{l.email}</div>
+                    <div className={`${tw.text.tiny} ${tw.text.muted}`}>
+                      {l.email}
+                    </div>
                   </td>
-                  <td>{l.leadFor}</td>
-                  <td>{money(l.targetBudget)}</td>
-                  <td>
+                  <td className={tw.td}>{l.leadFor}</td>
+                  <td className={tw.td}>{money(l.targetBudget)}</td>
+                  <td className={tw.td}>
                     <Badge
                       tone={
                         l.priority === "high" || l.priority === "urgent"
@@ -107,10 +115,10 @@ export default function LeadList() {
                       {l.priority}
                     </Badge>
                   </td>
-                  <td>
+                  <td className={tw.td}>
                     <Badge>{l.status}</Badge>
                   </td>
-                  <td>{dateFmt(l.nextFollowUpDate)}</td>
+                  <td className={tw.td}>{dateFmt(l.nextFollowUpDate)}</td>
                 </tr>
               ))}
             </tbody>

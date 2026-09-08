@@ -16,6 +16,7 @@ import {
   Textarea,
   Toast,
 } from "../../components/UI";
+import * as tw from "../../styles/tw";
 
 const initial = {
   vendorName: "",
@@ -64,23 +65,23 @@ export default function AddVendor() {
   };
   return (
     <>
-      <div className="page-head">
-        <div className="page-title">
-          <h1>Add New Vendor</h1>
-          <p>
+      <div className={tw.pageHead}>
+        <div>
+          <h1 className={tw.pageTitleH1}>Add New Vendor</h1>
+          <p className={tw.pageTitleP}>
             Add vendor details to your account. All fields marked with * are
             required.
           </p>
         </div>
       </div>
-      <div className="form-layout">
+      <div className={tw.formLayout}>
         <form onSubmit={submit}>
-          <div className="form-card">
-            <h3>Vendor Information</h3>
-            <div className="subtext">
+          <div className={tw.formCard}>
+            <h3 className={tw.formCardH3}>Vendor Information</h3>
+            <div className={tw.subtext}>
               Basic business, address and contact information.
             </div>
-            <div className="form-grid three">
+            <div className={tw.formGridThree}>
               <Field label="Vendor Name" required>
                 <Input
                   value={form.vendorName}
@@ -163,12 +164,12 @@ export default function AddVendor() {
               </Field>
             </div>
           </div>
-          <div className="form-card">
-            <h3>Additional Information</h3>
-            <div className="subtext">
+          <div className={tw.formCard}>
+            <h3 className={tw.formCardH3}>Additional Information</h3>
+            <div className={tw.subtext}>
               Optional commercial and relationship details.
             </div>
-            <div className="form-grid three">
+            <div className={tw.formGridThree}>
               <Field label="Contact Person">
                 <Input
                   value={form.contactPerson}
@@ -245,7 +246,7 @@ export default function AddVendor() {
                 />
               </Field>
             </div>
-            <div className="form-actions">
+            <div className={tw.formActions}>
               <Button kind="secondary">Cancel</Button>
               <Button type="submit" icon={Save} disabled={busy}>
                 {busy ? "Saving…" : "Save Vendor"}
@@ -253,54 +254,58 @@ export default function AddVendor() {
             </div>
           </div>
         </form>
-        <aside className="side-info">
-          <div className="info-card purple">
-            <h4>Business Type</h4>
-            <div className="info-row">
-              <div className="info-icon">
+        <aside className={tw.sideInfo}>
+          <div className={tw.infoCard.purple}>
+            <h4 className={tw.infoCardH4}>Business Type</h4>
+            <div className={tw.infoRow}>
+              <div className={tw.infoIcon}>
                 <Building2 />
               </div>
               <div>
-                <b>Supplier</b>
-                <p>Vendor supplies products or materials.</p>
+                <b className={tw.infoRowB}>Supplier</b>
+                <p className={tw.infoRowP}>Vendor supplies products or materials.</p>
               </div>
             </div>
-            <div className="info-row">
-              <div className="info-icon">
+            <div className={tw.infoRow}>
+              <div className={tw.infoIcon}>
                 <FileText />
               </div>
               <div>
-                <b>Service Provider</b>
-                <p>Professional or publication-related services.</p>
+                <b className={tw.infoRowB}>Service Provider</b>
+                <p className={tw.infoRowP}>
+                  Professional or publication-related services.
+                </p>
               </div>
             </div>
-            <div className="info-row">
-              <div className="info-icon">
+            <div className={tw.infoRow}>
+              <div className={tw.infoIcon}>
                 <ShieldCheck />
               </div>
               <div>
-                <b>Publisher</b>
-                <p>Journal, book or academic publishing partner.</p>
+                <b className={tw.infoRowB}>Publisher</b>
+                <p className={tw.infoRowP}>
+                  Journal, book or academic publishing partner.
+                </p>
               </div>
             </div>
-            <div className="info-row">
-              <div className="info-icon">
+            <div className={tw.infoRow}>
+              <div className={tw.infoIcon}>
                 <BadgeIndianRupee />
               </div>
               <div>
-                <b>Others</b>
-                <p>Other approved business relationships.</p>
+                <b className={tw.infoRowB}>Others</b>
+                <p className={tw.infoRowP}>Other approved business relationships.</p>
               </div>
             </div>
           </div>
-          <div className="info-card blue">
-            <div className="info-row">
-              <div className="info-icon">
+          <div className={tw.infoCard.blue}>
+            <div className={tw.infoRow}>
+              <div className={tw.infoIcon}>
                 <Info />
               </div>
               <div>
-                <b>Information</b>
-                <p>
+                <b className={tw.infoRowB}>Information</b>
+                <p className={tw.infoRowP}>
                   Vendors you create are automatically assigned to your Sales
                   account and visible to Admin.
                 </p>

@@ -22,6 +22,7 @@ import {
   dateFmt,
   initials,
 } from "../../components/UI";
+import * as tw from "../../styles/tw";
 
 export default function UserList() {
   const [items, setItems] = useState([]),
@@ -75,16 +76,16 @@ export default function UserList() {
   };
   return (
     <>
-      <div className="page-head">
-        <div className="page-title">
-          <h1>Users List</h1>
-          <p>
+      <div className={tw.pageHead}>
+        <div>
+          <h1 className={tw.pageTitleH1}>Users List</h1>
+          <p className={tw.pageTitleP}>
             Manage all system users. You can view, create, deactivate users and
             reset passwords.
           </p>
         </div>
       </div>
-      <div className="summary-strip">
+      <div className={tw.summaryStrip}>
         <StatCard label="Total Users" value={stats.total || 0} icon={Users} />
         <StatCard
           label="Marketing Users"
@@ -110,14 +111,14 @@ export default function UserList() {
           tone="red"
         />
       </div>
-      <div className="toolbar">
+      <div className={tw.toolbar}>
         <SearchBox
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Search by name, username, email or mobile"
         />
         <select
-          className="compact-select"
+          className={tw.compactSelect}
           value={role}
           onChange={(e) => {
             setPage(1);
@@ -130,7 +131,7 @@ export default function UserList() {
           <option value="admin">Admin</option>
         </select>
         <select
-          className="compact-select"
+          className={tw.compactSelect}
           value={status}
           onChange={(e) => {
             setPage(1);
@@ -166,36 +167,36 @@ export default function UserList() {
           <Button icon={Plus}>Create User</Button>
         </Link>
       </div>
-      <div className="panel">
-        <div className="table-wrap">
-          <table className="data-table">
+      <div className={tw.panel}>
+        <div className={tw.tableWrap}>
+          <table className={tw.dataTable}>
             <thead>
               <tr>
-                <th>#</th>
-                <th>Full Name</th>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Contact Number</th>
-                <th>User Type</th>
-                <th>Status</th>
-                <th>Created On</th>
-                <th>Actions</th>
+                <th className={tw.th}>#</th>
+                <th className={tw.th}>Full Name</th>
+                <th className={tw.th}>Username</th>
+                <th className={tw.th}>Email</th>
+                <th className={tw.th}>Contact Number</th>
+                <th className={tw.th}>User Type</th>
+                <th className={tw.th}>Status</th>
+                <th className={tw.th}>Created On</th>
+                <th className={tw.th}>Actions</th>
               </tr>
             </thead>
             <tbody>
               {items.map((u, i) => (
-                <tr key={u._id}>
-                  <td>{(meta?.page - 1) * meta?.limit + i + 1}</td>
-                  <td>
-                    <div className="person">
-                      <div className="mini-avatar">{initials(u.fullName)}</div>
-                      <strong>{u.fullName}</strong>
+                <tr key={u._id} className={tw.tr}>
+                  <td className={tw.td}>{(meta?.page - 1) * meta?.limit + i + 1}</td>
+                  <td className={tw.td}>
+                    <div className={tw.person}>
+                      <div className={tw.miniAvatar}>{initials(u.fullName)}</div>
+                      <strong className={tw.tdStrong}>{u.fullName}</strong>
                     </div>
                   </td>
-                  <td>@{u.username}</td>
-                  <td>{u.email}</td>
-                  <td>{u.contactNumber || "—"}</td>
-                  <td>
+                  <td className={tw.td}>@{u.username}</td>
+                  <td className={tw.td}>{u.email}</td>
+                  <td className={tw.td}>{u.contactNumber || "—"}</td>
+                  <td className={tw.td}>
                     <Badge>
                       {u.role === "sales"
                         ? "Marketing"
@@ -204,16 +205,16 @@ export default function UserList() {
                           : "Admin"}
                     </Badge>
                   </td>
-                  <td>
+                  <td className={tw.td}>
                     <Badge>{u.status}</Badge>
                   </td>
-                  <td>{dateFmt(u.createdAt)}</td>
-                  <td>
-                    <div className="inline-actions">
+                  <td className={tw.td}>{dateFmt(u.createdAt)}</td>
+                  <td className={tw.td}>
+                    <div className={tw.inlineActions}>
                       {u.role !== "admin" && (
                         <>
                           <button
-                            className="action-link"
+                            className={tw.actionLink}
                             onClick={() => {
                               setReset(u);
                               setPassword("");
@@ -222,7 +223,7 @@ export default function UserList() {
                             <RefreshCcw size={10} /> Reset Password
                           </button>
                           <button
-                            className="action-link"
+                            className={tw.actionLink}
                             onClick={() => toggle(u)}
                           >
                             {u.status === "active" ? "Disable" : "Activate"}
@@ -243,17 +244,17 @@ export default function UserList() {
           title={`Reset password — ${reset.fullName}`}
           onClose={() => setReset(null)}
         >
-          <p className="muted small">
+          <p className={`${tw.text.muted} ${tw.text.small}`}>
             Enter a temporary password. The user can use it on their next login.
           </p>
           <input
-            className="input"
+            className={`${tw.input} mt-2`}
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Minimum 8 characters with a number"
           />
-          <div className="form-actions">
+          <div className={tw.formActions}>
             <Button kind="secondary" onClick={() => setReset(null)}>
               Cancel
             </Button>

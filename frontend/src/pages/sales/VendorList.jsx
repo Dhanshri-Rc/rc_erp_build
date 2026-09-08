@@ -9,6 +9,8 @@ import {
   SearchBox,
   dateFmt,
 } from "../../components/UI";
+import * as tw from "../../styles/tw";
+
 export default function VendorList() {
   const [items, setItems] = useState([]),
     [meta, setMeta] = useState(null),
@@ -27,23 +29,25 @@ export default function VendorList() {
   }, [page, status]);
   return (
     <>
-      <div className="page-head">
-        <div className="page-title">
-          <h1>My Vendors</h1>
-          <p>View and manage vendors assigned to your marketing account.</p>
+      <div className={tw.pageHead}>
+        <div>
+          <h1 className={tw.pageTitleH1}>My Vendors</h1>
+          <p className={tw.pageTitleP}>
+            View and manage vendors assigned to your marketing account.
+          </p>
         </div>
         <Link to="/sales/vendors/create">
           <Button icon={Plus}>Add Vendor</Button>
         </Link>
       </div>
-      <div className="toolbar">
+      <div className={tw.toolbar}>
         <SearchBox
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Search vendor name, email or contact"
         />
         <select
-          className="compact-select"
+          className={tw.compactSelect}
           value={status}
           onChange={(e) => setStatus(e.target.value)}
         >
@@ -73,39 +77,39 @@ export default function VendorList() {
           Export
         </Button>
       </div>
-      <div className="panel">
-        <div className="table-wrap">
-          <table className="data-table">
+      <div className={tw.panel}>
+        <div className={tw.tableWrap}>
+          <table className={tw.dataTable}>
             <thead>
               <tr>
-                <th>#</th>
-                <th>Vendor Name</th>
-                <th>Business Type</th>
-                <th>Contact Person</th>
-                <th>Email</th>
-                <th>Mobile</th>
-                <th>Status</th>
-                <th>Added On</th>
-                <th>Action</th>
+                <th className={tw.th}>#</th>
+                <th className={tw.th}>Vendor Name</th>
+                <th className={tw.th}>Business Type</th>
+                <th className={tw.th}>Contact Person</th>
+                <th className={tw.th}>Email</th>
+                <th className={tw.th}>Mobile</th>
+                <th className={tw.th}>Status</th>
+                <th className={tw.th}>Added On</th>
+                <th className={tw.th}>Action</th>
               </tr>
             </thead>
             <tbody>
               {items.map((v, i) => (
-                <tr key={v._id}>
-                  <td>{(meta?.page - 1) * meta?.limit + i + 1}</td>
-                  <td>
-                    <strong>{v.vendorName}</strong>
+                <tr key={v._id} className={tw.tr}>
+                  <td className={tw.td}>{(meta?.page - 1) * meta?.limit + i + 1}</td>
+                  <td className={tw.td}>
+                    <strong className={tw.tdStrong}>{v.vendorName}</strong>
                   </td>
-                  <td>{v.businessType}</td>
-                  <td>{v.contactPerson || "—"}</td>
-                  <td>{v.email}</td>
-                  <td>{v.mobile}</td>
-                  <td>
+                  <td className={tw.td}>{v.businessType}</td>
+                  <td className={tw.td}>{v.contactPerson || "—"}</td>
+                  <td className={tw.td}>{v.email}</td>
+                  <td className={tw.td}>{v.mobile}</td>
+                  <td className={tw.td}>
                     <Badge>{v.status}</Badge>
                   </td>
-                  <td>{dateFmt(v.createdAt)}</td>
-                  <td>
-                    <button className="action-link">View</button>
+                  <td className={tw.td}>{dateFmt(v.createdAt)}</td>
+                  <td className={tw.td}>
+                    <button className={tw.actionLink}>View</button>
                   </td>
                 </tr>
               ))}
