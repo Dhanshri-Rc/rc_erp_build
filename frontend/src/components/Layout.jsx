@@ -184,20 +184,21 @@ export default function Layout() {
         onClick={() => setOpen(false)}
       />
       <aside className={`${sidebarBase} ${open ? sidebarOpen : ""}`}>
-        <div className="h-[72px] flex items-center px-[19px] border-b border-[#f0f1f6]">
+        <div className="h-[72px] flex shrink-0 items-center px-[19px] border-b border-[#f0f1f6]">
           <div className="flex items-center gap-[7px] font-bold text-[13px]">
             <img className="w-8 h-[30px] object-cover" src="/rc-logo.png" /> RC
             ERP
           </div>
         </div>
-        <div className="flex-1 overflow-hidden py-[11px] px-[10px]">
+        <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden py-[11px] px-[10px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {sections[user.role].map(([group, items]) => (
             <div key={group}>
-              <div className="text-[8px] font-semibold text-[#afb5c4] tracking-[0.08em] mt-4 mx-[9px] mb-2">
+              <div className="text-[9.5px] font-semibold text-[#afb5c4] tracking-[0.08em] mt-2.5 mx-[9px] mb-1.5">
                 {group}
               </div>
               {items.map(([label, to, Icon]) => (
                 <NavLink
+                  end
                   className={({ isActive }) =>
                     `${navItemBase} ${isActive ? navItemActive : ""}`
                   }
@@ -211,7 +212,7 @@ export default function Layout() {
             </div>
           ))}
         </div>
-        <div className="relative mx-[11px] mb-[15px] mt-2">
+        <div className="relative mx-[11px] mb-2 mt-1 shrink-0 bg-white">
           <AnimatePresence>
             {profileMenu && (
               <motion.div
@@ -223,7 +224,7 @@ export default function Layout() {
                 <button
                   type="button"
                   onClick={signout}
-                  className="flex h-9 w-full items-center gap-[9px] rounded-[5px] border-0 bg-transparent px-[10px] text-left text-[12px] text-[#e5484d] transition-colors hover:bg-[#fff1f1] [&>svg]:h-[15px] [&>svg]:w-[15px]"
+                  className="flex h-9 w-full items-center gap-[9px] rounded-[5px] border-0 bg-transparent px-[10px] text-left text-[12px] text-[#e5484d] transition-colors hover:bg-[#fff1f1] [&>svg]:h-[13px] [&>svg]:w-[13px]"
                 >
                   <LogOut />
                   Logout
@@ -233,7 +234,7 @@ export default function Layout() {
           </AnimatePresence>
           <button
             type="button"
-            className="flex w-full items-center gap-2 border-x-0 border-b-0 border-t border-[#eff0f5] bg-transparent p-[10px] text-left"
+            className="flex w-full items-center gap-2 border-x-0 border-b-0 border-t border-[#eff0f5] bg-transparent p-2 text-left"
             onClick={() => setProfileMenu((value) => !value)}
             aria-expanded={profileMenu}
           >
@@ -241,10 +242,10 @@ export default function Layout() {
               {initials(user.fullName)}
             </div>
             <div className="min-w-0 flex-1">
-              <b className="text-[9px] block whitespace-nowrap overflow-hidden text-ellipsis">
+              <b className="text-[10.5px] block whitespace-nowrap overflow-hidden text-ellipsis">
                 {user.fullName}
               </b>
-              <span className="text-[7.5px] text-[#9aa1b1] block mt-[2px]">
+              <span className="text-[9.5px] text-[#9aa1b1] block mt-1">
                 {roleLabel[user.role]}
               </span>
             </div>
