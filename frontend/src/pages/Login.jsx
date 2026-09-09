@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+
+import { useRef, useState } from "react";
 import {
   Eye,
   EyeOff,
@@ -12,6 +13,7 @@ import { useAuth, dashboardFor } from "../context/AuthContext";
 export default function Login() {
   const { user, login } = useAuth();
   const nav = useNavigate();
+  const loginInProgress = useRef(false);
 
   const [show, setShow] = useState(false),
     [form, setForm] = useState({
@@ -26,15 +28,41 @@ export default function Login() {
 
   const submit = async (e) => {
     e.preventDefault();
+
+    if (loginInProgress.current) return;
+
+    const identifier = form.identifier.trim();
+    if (!identifier || !form.password) {
+      setError("Username/email and password are required");
+      return;
+    }
+
     setError("");
     setBusy(true);
+    loginInProgress.current = true;
 
     try {
-      const u = await login(form);
+      const u = await login({
+        identifier,
+        password: form.password,
+        remember: Boolean(form.remember),
+      });
       nav(dashboardFor(u.role), { replace: true });
     } catch (err) {
-      setError(err.message || "Login failed");
+      const status = err?.response?.status ?? err?.status;
+
+      if (status === 429) {
+        setError("Too many login attempts. Please try again later.");
+      } else if (
+        err?.code === "ERR_NETWORK" ||
+        err?.message === "Unable to reach server"
+      ) {
+        setError("Unable to connect securely. Please try again.");
+      } else {
+        setError("Invalid username/email or password.");
+      }
     } finally {
+      loginInProgress.current = false;
       setBusy(false);
     }
   };
@@ -70,6 +98,7 @@ export default function Login() {
       <div className="relative z-10 flex max-h-full w-full max-w-[480px] flex-col justify-center text-center max-[680px]:max-w-[490px]">
         <form
   onSubmit={submit}
+  autoComplete="on"
   className="w-full rounded-[18px] border border-[#e5e8f0] bg-white px-[74px] pb-7 pt-5 shadow-[0_12px_36px_rgba(59,72,125,0.08)] max-[680px]:px-6 max-[680px]:pb-6 max-[680px]:pt-5 max-[390px]:px-[17px]"
 >
           <img
@@ -110,10 +139,20 @@ export default function Login() {
             <input
               autoFocus
               type="text"
+              name="identifier"
+              autoComplete="username"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
+              required
+              maxLength={254}
               placeholder="Username or Email"
               value={form.identifier}
               onChange={(e) =>
-                setForm({ ...form, identifier: e.target.value })
+                setForm((current) => ({
+                  ...current,
+                  identifier: e.target.value,
+                }))
               }
               className="h-10 w-full rounded-[7px] border border-[#dfe3ec] bg-white pb-0 pl-12 pr-[42px] pt-0 text-[13px] text-[#394259] outline-none transition duration-200 placeholder:text-[#7c8498] focus:border-[#7755ef] focus:shadow-[0_0_0_3px_rgba(111,76,244,0.08)]"
             />
@@ -128,10 +167,17 @@ export default function Login() {
 
             <input
               type={show ? "text" : "password"}
+              name="password"
+              autoComplete="current-password"
+              required
+              maxLength={128}
               placeholder="Password"
               value={form.password}
               onChange={(e) =>
-                setForm({ ...form, password: e.target.value })
+                setForm((current) => ({
+                  ...current,
+                  password: e.target.value,
+                }))
               }
               className="h-10 w-full rounded-[7px] border border-[#dfe3ec] bg-white pb-0 pl-12 pr-[42px] pt-0 text-[13px] text-[#394259] outline-none transition duration-200 placeholder:text-[#7c8498] focus:border-[#7755ef] focus:shadow-[0_0_0_3px_rgba(111,76,244,0.08)]"
             />
@@ -163,9 +209,13 @@ export default function Login() {
             <label className="flex cursor-pointer items-center gap-2 text-[#394259]">
               <input
                 type="checkbox"
+                name="remember"
                 checked={form.remember}
                 onChange={(e) =>
-                  setForm({ ...form, remember: e.target.checked })
+                  setForm((current) => ({
+                    ...current,
+                    remember: e.target.checked,
+                  }))
                 }
                 className="h-[15px] w-[15px] cursor-pointer accent-[#6f4cf4]"
               />
@@ -188,6 +238,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={busy}
+            aria-busy={busy}
             className="h-10 w-full rounded-[7px] border-0 bg-[linear-gradient(110deg,#6f4cf4_0%,#5e6bea_47%,#10b8bf_100%)] text-[13px] font-semibold text-white shadow-[0_7px_20px_rgba(99,77,229,0.18)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_11px_24px_rgba(99,77,229,0.25)] disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transform-none motion-reduce:transition-none"
           >
             {busy ? "Signing in…" : "Login"}
