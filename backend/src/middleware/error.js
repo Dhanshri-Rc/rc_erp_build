@@ -4,7 +4,11 @@ export function notFound(req, res) {
 
 export function errorHandler(err, req, res, next) {
   console.error(err);
-  const status = err.status || (err.name === 'ValidationError' ? 422 : 500);
+  const duplicate = err?.code === 11000;
+  const status = err.status || (duplicate ? 409 : err.name === 'ValidationError' || err.name === 'CastError' ? 422 : 500);
   const errors = err.errors ? Object.values(err.errors).map((e) => e.message) : [];
-  res.status(status).json({ success: false, message: err.message || 'Internal server error', errors });
+  const publicMessage = status >= 500 && process.env.NODE_ENV === 'production'
+    ? 'Internal server error'
+    : duplicate ? 'A record with that value already exists' : err.message || 'Internal server error';
+  res.status(status).json({ success: false, message: publicMessage, errors });
 }

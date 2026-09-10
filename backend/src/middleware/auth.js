@@ -1,11 +1,12 @@
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import Session from '../models/Session.js';
 
 const isProduction = process.env.NODE_ENV === "production";
 const jwtSecret = process.env.JWT_SECRET;
 
-if (isProduction && !jwtSecret) {
-  throw new Error("JWT_SECRET is required in production");
+if (!jwtSecret || jwtSecret.length < 32) {
+  throw new Error("JWT_SECRET must contain at least 32 characters");
 }
 
 export async function protect(req, res, next) {
@@ -29,13 +30,15 @@ export async function protect(req, res, next) {
 
     const payload = jwt.verify(
       token,
-      jwtSecret || "development-secret-change-me",
+      jwtSecret,
       {
         algorithms: ["HS256"],
+        issuer: 'rc-erp-api',
+        audience: 'rc-erp-web',
       },
     );
 
-    if (!payload?.id) {
+    if (!payload?.id || !payload?.jti) {
       return res.status(401).json({
         success: false,
         message: "Invalid session",
@@ -68,11 +71,15 @@ export async function protect(req, res, next) {
       });
     }
 
+    const session = await Session.exists({ tokenId:payload.jti, user:user._id, revokedAt:null, expiresAt:{$gt:new Date()} });
+    if (!session) return res.status(401).json({success:false,message:'Session is no longer active',errors:[]});
+
     req.user = user;
     req.auth = {
       userId: user._id,
       issuedAt: payload.iat,
       expiresAt: payload.exp,
+      tokenId: payload.jti,
     };
 
     return next();

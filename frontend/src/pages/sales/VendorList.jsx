@@ -69,7 +69,7 @@ export default function VendorList() {
           icon={Download}
           onClick={() =>
             window.open(
-              `${import.meta.env.VITE_API_URL || "http://localhost:5000/api"}/reports/vendors`,
+              `${api.defaults.baseURL}/reports/vendors`,
               "_blank",
             )
           }

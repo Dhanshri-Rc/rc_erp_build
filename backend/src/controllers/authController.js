@@ -2,12 +2,14 @@ import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import { asyncHandler, ok } from "../utils/http.js";
 import { logActivity } from "../utils/audit.js";
+import Session from '../models/Session.js';
+import crypto from 'crypto';
 
 const isProduction = process.env.NODE_ENV === "production";
 const jwtSecret = process.env.JWT_SECRET;
 
-if (isProduction && !jwtSecret) {
-  throw new Error("JWT_SECRET is required in production");
+if (!jwtSecret || jwtSecret.length < 32) {
+  throw new Error("JWT_SECRET must contain at least 32 characters");
 }
 
 const getCookieOptions = (maxAge) => ({
@@ -20,12 +22,14 @@ const getCookieOptions = (maxAge) => ({
 
 const signToken = (userId, remember) => {
   const sessionDuration = remember ? "30d" : "8h";
+  const tokenId = crypto.randomUUID();
 
-  return jwt.sign(
-    { id: userId },
-    jwtSecret || "development-secret-change-me",
-    { expiresIn: sessionDuration },
+  const token = jwt.sign(
+    { id: userId, jti: tokenId },
+    jwtSecret,
+    { expiresIn: sessionDuration, issuer:'rc-erp-api', audience:'rc-erp-web' },
   );
+  return { token, tokenId };
 };
 
 const safe = (user) => ({
@@ -43,7 +47,11 @@ const safe = (user) => ({
 export const login = asyncHandler(async (req, res) => {
   const { identifier, email, username, password, remember } = req.body;
 
-  const loginValue = (identifier || email || username || "")
+  const rawLogin = identifier || email || username || "";
+  if (typeof rawLogin !== 'string' || typeof password !== 'string' || password.length > 128) {
+    return res.status(422).json({ success: false, message: 'Invalid login request', errors: [] });
+  }
+  const loginValue = rawLogin
     .trim()
     .toLowerCase();
 
@@ -68,9 +76,9 @@ export const login = asyncHandler(async (req, res) => {
   }
 
   if (user.status !== "active") {
-    return res.status(403).json({
+    return res.status(401).json({
       success: false,
-      message: "Your account is inactive. Contact the administrator.",
+      message: "Invalid username/email or password",
       errors: [],
     });
   }
@@ -79,13 +87,15 @@ export const login = asyncHandler(async (req, res) => {
   await user.save();
 
   const shouldRemember = remember === true;
-  const token = signToken(user._id, shouldRemember);
+  const { token, tokenId } = signToken(user._id, shouldRemember);
 
   const maxAge = shouldRemember
     ? 30 * 24 * 60 * 60 * 1000
     : 8 * 60 * 60 * 1000;
 
   res.cookie("rcerp_token", token, getCookieOptions(maxAge));
+  res.setHeader('Cache-Control', 'no-store');
+  await Session.create({ user:user._id, tokenId, expiresAt:new Date(Date.now()+maxAge) });
 
   req.user = user;
 
@@ -101,12 +111,14 @@ export const login = asyncHandler(async (req, res) => {
 });
 
 export const logout = asyncHandler(async (req, res) => {
+  if (req.auth?.tokenId) await Session.updateOne({tokenId:req.auth.tokenId,user:req.user._id},{$set:{revokedAt:new Date()}});
   res.clearCookie("rcerp_token", getCookieOptions());
 
   return ok(res, null, "Logged out successfully");
 });
 
 export const me = asyncHandler(async (req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
   return ok(res, safe(req.user));
 });
 

@@ -189,11 +189,24 @@ The original uploaded screenshots used to recreate the interface are included in
 
 Before deployment:
 
-- Use a strong unique `JWT_SECRET`.
+- Copy `.env.example` to `.env` locally; never commit or distribute `.env` files.
+- Use a strong unique `JWT_SECRET` containing at least 32 random characters.
 - Use a production MongoDB URI.
+- MongoDB must be a replica set (MongoDB Atlas is suitable) because financial writes use transactions.
 - Set `NODE_ENV=production`.
 - Set `FRONTEND_URL` to the deployed frontend domain.
+- Set `TRUST_PROXY=true` when the API is behind one trusted reverse proxy such as Render.
+- Use `COOKIE_SAME_SITE=none` only when frontend and API are on different sites; HTTPS is mandatory.
 - Store uploads in durable object storage if deploying to ephemeral infrastructure.
 - Serve frontend and backend over HTTPS so secure cookies are enabled.
 - Remove or rotate all demo credentials.
+- Run `npm run check` and `npm audit --omit=dev` in the backend and `npm run build` plus `npm audit` in the frontend before release.
+
+### Database commands
+
+- `npm run seed` only creates the first administrator and never deletes existing data.
+- `npm run seed:demo` is development-only and intentionally destructive. It is blocked unless `ALLOW_DEMO_RESET=I_UNDERSTAND_THIS_DELETES_ALL_DATA` is explicitly set.
+- Never run `seed:demo` from a deployment command or against a production database.
+
+See `PRODUCTION_CHECKLIST.md` before deploying.
 

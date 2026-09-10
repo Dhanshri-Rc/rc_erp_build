@@ -17,6 +17,11 @@ export function AuthProvider({ children }) {
       .catch(() => setUser(null))
       .finally(() => setLoading(false));
   }, []);
+  useEffect(() => {
+    const clearExpiredSession = () => setUser(null);
+    window.addEventListener('rcerp:session-expired', clearExpiredSession);
+    return () => window.removeEventListener('rcerp:session-expired', clearExpiredSession);
+  }, []);
   const value = useMemo(
     () => ({
       user,
