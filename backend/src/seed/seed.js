@@ -12,9 +12,14 @@ import Payment from '../models/Payment.js';
 import Receipt from '../models/Receipt.js';
 import ActivityLog from '../models/ActivityLog.js';
 import Notification from '../models/Notification.js';
+import Session from '../models/Session.js';
+
+if (process.env.NODE_ENV === 'production' || process.env.ALLOW_DEMO_RESET !== 'I_UNDERSTAND_THIS_DELETES_ALL_DATA') {
+  throw new Error('Demo reset blocked. It is forbidden in production and requires explicit ALLOW_DEMO_RESET confirmation.');
+}
 
 await connectDB();
-for (const M of [Notification,ActivityLog,Receipt,Payment,Lead,PublicationService,AuthorshipSale,Article,JournalIssue,Vendor,Journal,User]) await M.deleteMany({});
+for (const M of [Session,Notification,ActivityLog,Receipt,Payment,Lead,PublicationService,AuthorshipSale,Article,JournalIssue,Vendor,Journal,User]) await M.deleteMany({});
 
 const admin=await User.create({username:process.env.SEED_ADMIN_USERNAME||'admin',email:process.env.SEED_ADMIN_EMAIL||'admin@rcerp.local',password:process.env.SEED_ADMIN_PASSWORD||'Admin@123',fullName:'Admin User',contactNumber:'9876543210',role:'admin'});
 const sales=await User.create({username:'marketing.user',email:'sales@rcerp.local',password:'Sales@123',fullName:'Marketing User',contactNumber:'9876543211',role:'sales',createdBy:admin._id});

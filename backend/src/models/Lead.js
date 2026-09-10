@@ -9,4 +9,6 @@ const schema = new mongoose.Schema({
   status: { type: String, enum: ['new','contacted','discussion','proposal','negotiation','converted','closed'], default: 'new' },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, convertedToDeal: { type: Boolean, default: false }
 }, { timestamps: true });
+schema.index({ assignedTo: 1, status: 1, nextFollowUpDate: 1 });
+schema.index({ createdBy: 1, createdAt: -1 });
 export default mongoose.model('Lead', schema);

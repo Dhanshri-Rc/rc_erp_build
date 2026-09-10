@@ -11,4 +11,6 @@ const vendorSchema = new mongoose.Schema({
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
 }, { timestamps: true });
+vendorSchema.index({ assignedTo: 1, createdAt: -1 });
+vendorSchema.index({ status: 1 });
 export default mongoose.model('Vendor', vendorSchema);

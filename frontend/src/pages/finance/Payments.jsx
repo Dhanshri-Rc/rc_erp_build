@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { CheckCircle2, Download, Eye, XCircle } from "lucide-react";
-import { api } from "../../services/api";
+import { api, protectedFileUrl } from "../../services/api";
 import {
   Badge,
   Button,
@@ -57,7 +57,7 @@ export default function Payments({ admin = false }) {
           icon={Download}
           onClick={() =>
             window.open(
-              `${import.meta.env.VITE_API_URL || "http://localhost:5000/api"}/reports/payments`,
+              `${api.defaults.baseURL}/reports/payments`,
               "_blank",
             )
           }
@@ -169,7 +169,7 @@ export default function Payments({ admin = false }) {
                 className={tw.viewLink}
                 target="_blank"
                 rel="noreferrer"
-                href={`${(import.meta.env.VITE_API_URL || "http://localhost:5000/api").replace("/api", "")}/${selected.proof.replaceAll("\\", "/")}`}
+                href={protectedFileUrl(selected.proof)}
               >
                 Open payment proof
               </a>

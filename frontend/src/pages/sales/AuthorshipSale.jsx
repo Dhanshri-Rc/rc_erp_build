@@ -72,7 +72,7 @@ export default function AuthorshipSale() {
       .then((r) => setCatalog((x) => ({ ...x, articles: r.data.data })));
   }, [f.journal]);
   useEffect(() => {
-    if (selectedArticle && !f.pricePerAuthor)
+    if (selectedArticle)
       setF((x) => ({
         ...x,
         pricePerAuthor: selectedArticle.pricePerAuthor || "",
@@ -212,7 +212,7 @@ export default function AuthorshipSale() {
                   type="number"
                   min="0"
                   value={f.totalPrice}
-                  onChange={(e) => set("totalPrice", e.target.value)}
+                  readOnly
                 />
               </Field>
               <Field label="Price Per Author (₹)" required>
@@ -220,7 +220,7 @@ export default function AuthorshipSale() {
                   type="number"
                   min="0"
                   value={f.pricePerAuthor}
-                  onChange={(e) => set("pricePerAuthor", e.target.value)}
+                  readOnly
                 />
               </Field>
               <Field label="No. of Authors / POS" required>

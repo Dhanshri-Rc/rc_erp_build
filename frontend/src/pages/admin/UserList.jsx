@@ -156,7 +156,7 @@ export default function UserList() {
           icon={Download}
           onClick={() =>
             window.open(
-              `${import.meta.env.VITE_API_URL || "http://localhost:5000/api"}/reports/users`,
+              `${api.defaults.baseURL}/reports/users`,
               "_blank",
             )
           }

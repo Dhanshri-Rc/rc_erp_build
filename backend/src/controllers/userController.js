@@ -1,6 +1,7 @@
 import User from '../models/User.js';
 import { asyncHandler, ok, pagination, paginateMeta } from '../utils/http.js';
 import { logActivity, notifyUser } from '../utils/audit.js';
+import Session from '../models/Session.js';
 
 export const listUsers = asyncHandler(async (req, res) => {
   const { page, limit, skip } = pagination(req.query);
@@ -50,8 +51,13 @@ export const updateUser = asyncHandler(async (req, res) => {
 
 export const setStatus = asyncHandler(async (req, res) => {
   if (!['active','inactive'].includes(req.body.status)) return res.status(422).json({ success:false, message:'Invalid status', errors:[] });
+  if (String(req.params.id) === String(req.user._id) && req.body.status === 'inactive') return res.status(409).json({success:false,message:'You cannot deactivate your own account',errors:[]});
+  const target=await User.findById(req.params.id).select('role status');
+  if(!target)return res.status(404).json({success:false,message:'User not found',errors:[]});
+  if(target.role==='admin'&&target.status==='active'&&req.body.status==='inactive'&&await User.countDocuments({role:'admin',status:'active'})<=1) return res.status(409).json({success:false,message:'The last active administrator cannot be deactivated',errors:[]});
   const user = await User.findByIdAndUpdate(req.params.id, { status: req.body.status }, { new: true }).select('-password');
   if (!user) return res.status(404).json({ success:false, message:'User not found', errors:[] });
+  if (req.body.status === 'inactive') await Session.updateMany({user:user._id,revokedAt:null},{$set:{revokedAt:new Date()}});
   await logActivity(req, { action: req.body.status === 'active' ? 'USER_ENABLED' : 'USER_DISABLED', module:'users', entityType:'User', entityId:user._id, description:`${user.fullName} set to ${req.body.status}` });
   return ok(res, user, `User ${req.body.status}`);
 });
@@ -62,6 +68,7 @@ export const resetPassword = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id).select('+password');
   if (!user) return res.status(404).json({ success:false, message:'User not found', errors:[] });
   user.password = password; user.passwordChangedAt = new Date(); await user.save();
+  await Session.updateMany({user:user._id,revokedAt:null},{$set:{revokedAt:new Date()}});
   await logActivity(req, { action:'PASSWORD_RESET', module:'users', entityType:'User', entityId:user._id, description:`Password reset for ${user.fullName}` });
   return ok(res, null, 'Password reset successfully');
 });

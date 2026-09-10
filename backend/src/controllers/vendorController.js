@@ -1,6 +1,10 @@
 import Vendor from '../models/Vendor.js';
 import { asyncHandler, ok, pagination, paginateMeta } from '../utils/http.js';
 import { logActivity } from '../utils/audit.js';
+import User from '../models/User.js';
+import { pick } from '../utils/input.js';
+
+const vendorFields = ['vendorName','businessType','vendorCategory','address','city','state','country','postalCode','mobile','alternateMobile','email','contactPerson','designation','vendorSince','gstNumber','panNumber','website','paymentTerms','creditLimit','preferredPaymentMode','status','notes'];
 
 function ownership(req, filter = {}) {
   if (req.user.role === 'sales') filter.assignedTo = req.user._id;
@@ -25,8 +29,9 @@ export const listVendors = asyncHandler(async (req, res) => {
 export const createVendor = asyncHandler(async (req, res) => {
   const required = ['vendorName','businessType','address','city','state','country','postalCode','mobile','email'];
   if (required.some((k) => !req.body[k])) return res.status(422).json({ success:false, message:'Please complete all required vendor fields', errors:[] });
-  const assignedTo = req.user.role === 'sales' ? req.user._id : (req.body.assignedTo || req.user._id);
-  const vendor = await Vendor.create({ ...req.body, createdBy:req.user._id, assignedTo });
+  const assignedTo = req.user.role === 'sales' ? req.user._id : req.body.assignedTo;
+  if (!assignedTo || !await User.exists({ _id: assignedTo, role: 'sales', status: 'active' })) return res.status(422).json({ success:false, message:'Assign the vendor to an active sales user', errors:[] });
+  const vendor = await Vendor.create({ ...pick(req.body, vendorFields), createdBy:req.user._id, assignedTo });
   await logActivity(req, { action:'VENDOR_CREATED', module:'vendors', entityType:'Vendor', entityId:vendor._id, description:`Added vendor ${vendor.vendorName}` });
   return ok(res, vendor, 'Vendor created successfully', 201);
 });
@@ -38,7 +43,12 @@ export const getVendor = asyncHandler(async (req, res) => {
 });
 export const updateVendor = asyncHandler(async (req,res) => {
   const filter = ownership(req,{_id:req.params.id});
-  const vendor = await Vendor.findOneAndUpdate(filter, req.body, {new:true, runValidators:true});
+  const changes = pick(req.body, vendorFields);
+  if (req.user.role === 'admin' && req.body.assignedTo !== undefined) {
+    if (!await User.exists({ _id:req.body.assignedTo, role:'sales', status:'active' })) return res.status(422).json({success:false,message:'Assign the vendor to an active sales user',errors:[]});
+    changes.assignedTo = req.body.assignedTo;
+  }
+  const vendor = await Vendor.findOneAndUpdate(filter, changes, {new:true, runValidators:true});
   if (!vendor) return res.status(404).json({success:false,message:'Vendor not found',errors:[]});
   await logActivity(req,{action:'VENDOR_UPDATED',module:'vendors',entityType:'Vendor',entityId:vendor._id,description:`Updated vendor ${vendor.vendorName}`});
   return ok(res,vendor,'Vendor updated successfully');
