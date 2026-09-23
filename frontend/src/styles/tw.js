@@ -117,7 +117,9 @@ export const badge = {
 export const statusDot = "w-[5px] h-[5px] rounded-full inline-block bg-current";
 
 export const actionLink =
-  "border-0 bg-transparent text-[#6844ef] text-[12px] px-1 py-[3px] disabled:opacity-50";
+  "border-0 bg-transparent text-[#6844ef] text-[12px] font-semibold px-2 py-[5px] rounded-[5px] inline-flex items-center gap-1 transition-all duration-200 hover:bg-[#f1edff] hover:-translate-y-px disabled:opacity-50";
+export const actionDelete =
+  "border-0 bg-transparent text-[#d84d5a] text-[12px] font-semibold px-2 py-[5px] rounded-[5px] inline-flex items-center gap-1 transition-all duration-200 hover:bg-[#fff0f1] hover:-translate-y-px disabled:opacity-50";
 export const pagination =
   "h-[45px] px-3 flex justify-between items-center text-[12px] text-[#9399a9]";
 export const pageNumbers = "flex gap-1";
@@ -215,13 +217,25 @@ export const legendDot = "w-[6px] h-[6px] rounded-full inline-block mr-[3px] bg-
 export const legendDotCyan = "bg-[#14b6bf]";
 
 export const money = "tabular-nums";
-export const inlineActions = "flex gap-1";
+export const inlineActions = "flex gap-1 flex-wrap items-center";
 
 export const modalBackdrop =
-  "fixed inset-0 bg-[rgba(21,26,43,0.35)] grid place-items-center z-[100] p-4";
+  "fixed inset-0 bg-[rgba(21,26,43,0.42)] backdrop-blur-[2px] grid place-items-center z-[100] p-4 max-[480px]:p-2";
 export const modal =
-  "w-full max-w-[460px] bg-white rounded-[10px] p-[18px] shadow-[0_20px_60px_rgba(21,26,43,0.22)]";
-export const modalH3 = "m-0 mb-3 text-[13px]";
+  "w-full max-w-[520px] max-h-[88vh] bg-white rounded-[12px] shadow-[0_20px_60px_rgba(21,26,43,0.22)] overflow-hidden";
+export const modalWide = "max-w-[760px]";
+export const modalHeader = "flex items-center justify-between gap-3 px-[18px] py-[14px] border-b border-[#eef0f5]";
+export const modalH3 = "m-0 text-[14px] text-[#242a3c]";
+export const modalClose = "w-8 h-8 rounded-full border-0 bg-[#f5f3fb] text-[#6e55d9] grid place-items-center transition-all hover:bg-[#ebe5ff] hover:rotate-90 [&>svg]:w-4";
+export const modalBody = "p-[18px] overflow-y-auto max-h-[calc(88vh-58px)]";
+export const detailGrid = "grid grid-cols-2 gap-3 max-[560px]:grid-cols-1";
+export const detailItem = "rounded-[7px] bg-[#fafafe] border border-[#eef0f5] p-[10px]";
+export const detailLabel = "block text-[10px] uppercase tracking-[0.06em] text-[#9299aa] mb-1";
+export const detailValue = "text-[12px] text-[#343b50] font-semibold break-words whitespace-normal";
+export const positionGrid = "grid grid-cols-4 gap-2 max-[680px]:grid-cols-3 max-[420px]:grid-cols-2";
+export const positionAvailable = "min-h-[58px] rounded-[8px] border border-[#dce0ea] bg-white text-[#4f586d] p-2 text-left transition-all hover:-translate-y-0.5 hover:border-[#7959ec] hover:shadow-[0_6px_16px_rgba(91,67,210,0.1)]";
+export const positionSelected = "border-[#6f4cf4] bg-[#f3efff] text-[#5f3ed6] ring-2 ring-[#e4ddff]";
+export const positionBooked = "min-h-[58px] rounded-[8px] border border-[#ffd9dc] bg-[#fff6f7] text-[#bd4e58] p-2 text-left cursor-not-allowed";
 
 export const toast = {
   base: "fixed right-5 bottom-5 z-[120] min-w-[240px] max-w-[360px] text-white rounded-lg px-[14px] py-[11px] shadow-[0_10px_30px_rgba(0,0,0,0.15)] text-[12px] cursor-pointer",

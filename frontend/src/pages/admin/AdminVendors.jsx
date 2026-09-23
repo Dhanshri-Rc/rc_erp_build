@@ -12,11 +12,18 @@ import { api } from "../../services/api";
 import {
   Badge,
   Button,
+  ConfirmDialog,
+  Field,
+  Input,
+  Modal,
   Pagination,
+  RecordActions,
   SearchBox,
+  Select,
   StatCard,
+  Textarea,
+  Toast,
   dateFmt,
-  initials,
 } from "../../components/UI";
 import * as tw from "../../styles/tw";
 
@@ -27,7 +34,12 @@ export default function AdminVendors({ byEmployee = false }) {
     [status, setStatus] = useState(""),
     [employee, setEmployee] = useState(""),
     [users, setUsers] = useState([]),
-    [page, setPage] = useState(1);
+    [page, setPage] = useState(1),
+    [selected, setSelected] = useState(null),
+    [editing, setEditing] = useState(null),
+    [removing, setRemoving] = useState(null),
+    [toast, setToast] = useState(null),
+    [busy, setBusy] = useState(false);
   const load = () =>
     api
       .get("/vendors", {
@@ -53,6 +65,8 @@ export default function AdminVendors({ byEmployee = false }) {
   }, []);
   const active = items.filter((x) => x.status === "active").length,
     inactive = items.filter((x) => x.status === "inactive").length;
+  const saveEdit=async(e)=>{e.preventDefault();setBusy(true);try{await api.put(`/vendors/${editing._id}`,{...editing,assignedTo:editing.assignedTo?._id||editing.assignedTo,creditLimit:Number(editing.creditLimit||0)});setEditing(null);await load();setToast({type:"success",message:"Vendor updated successfully"});}catch(error){setToast({type:"error",message:error.message});}finally{setBusy(false);}};
+  const remove=async()=>{setBusy(true);try{await api.delete(`/vendors/${removing._id}`);setRemoving(null);await load();setToast({type:"success",message:"Vendor deleted successfully"});}catch(error){setToast({type:"error",message:error.message});}finally{setBusy(false);}};
   return (
     <>
       <div className={tw.pageHead}>
@@ -66,18 +80,16 @@ export default function AdminVendors({ byEmployee = false }) {
               : "View and manage all vendors across RC ERP"}
           </p>
         </div>
-        <Button
-          kind="secondary"
-          icon={Download}
-          onClick={() =>
-            window.open(
-              `${api.defaults.baseURL}/reports/vendors`,
-              "_blank",
-            )
-          }
-        >
-          Export Report
-        </Button>
+        <div className={tw.headActions}>
+          <Link to="/admin/vendors/create"><Button icon={Plus}>Add Vendor</Button></Link>
+          <Button
+            kind="secondary"
+            icon={Download}
+            onClick={() => window.open(`${api.defaults.baseURL}/reports/vendors`, "_blank")}
+          >
+            Export Report
+          </Button>
+        </div>
       </div>
       {byEmployee && (
         <div className={tw.toolbar}>
@@ -184,7 +196,7 @@ export default function AdminVendors({ byEmployee = false }) {
                   <td className={tw.td}>{dateFmt(v.createdAt)}</td>
                   <td className={tw.td}>{v.assignedTo?.fullName || "—"}</td>
                   <td className={tw.td}>
-                    <button className={tw.actionLink}>View</button>
+                    <RecordActions onView={()=>setSelected(v)} onEdit={()=>setEditing({...v,assignedTo:v.assignedTo?._id||v.assignedTo})} onDelete={()=>setRemoving(v)}/>
                   </td>
                 </tr>
               ))}
@@ -193,6 +205,50 @@ export default function AdminVendors({ byEmployee = false }) {
         </div>
         <Pagination meta={meta} onPage={setPage} />
       </div>
+      {selected && (
+        <Modal title="Vendor Details" onClose={() => setSelected(null)} wide>
+          <div className={tw.detailGrid}>
+            {[
+              ["Vendor Name", selected.vendorName],
+              ["Business Type", selected.businessType],
+              ["Category", selected.vendorCategory || "—"],
+              ["Assigned Sales User", selected.assignedTo?.fullName || "—"],
+              ["Contact Person", selected.contactPerson || "—"],
+              ["Designation", selected.designation || "—"],
+              ["Email", selected.email],
+              ["Mobile", selected.mobile],
+              ["Address", [selected.address, selected.city, selected.state, selected.country, selected.postalCode].filter(Boolean).join(", ")],
+              ["Website", selected.website || "—"],
+              ["Payment Terms", selected.paymentTerms || "—"],
+              ["Status", selected.status],
+              ["Added On", dateFmt(selected.createdAt)],
+              ["Notes", selected.notes || "—"],
+            ].map(([label,value]) => (
+              <div className={tw.detailItem} key={label}>
+                <span className={tw.detailLabel}>{label}</span>
+                <div className={tw.detailValue}>{value}</div>
+              </div>
+            ))}
+          </div>
+        </Modal>
+      )}
+      {editing&&<Modal title="Edit Vendor" onClose={()=>setEditing(null)} wide><form onSubmit={saveEdit}><div className={tw.formGridThree}>
+        <Field label="Vendor Name" required><Input value={editing.vendorName||""} onChange={(e)=>setEditing({...editing,vendorName:e.target.value})}/></Field>
+        <Field label="Business Type" required><Select value={editing.businessType||"Supplier"} onChange={(e)=>setEditing({...editing,businessType:e.target.value})}><option>Supplier</option><option>Service Provider</option><option>Publisher</option><option>Others</option></Select></Field>
+        <Field label="Assigned Sales User" required><Select value={editing.assignedTo||""} onChange={(e)=>setEditing({...editing,assignedTo:e.target.value})}>{users.filter((u)=>u.status==="active").map((u)=><option key={u._id} value={u._id}>{u.fullName}</option>)}</Select></Field>
+        <Field label="Address" required className="full"><Textarea value={editing.address||""} onChange={(e)=>setEditing({...editing,address:e.target.value})}/></Field>
+        <Field label="City" required><Input value={editing.city||""} onChange={(e)=>setEditing({...editing,city:e.target.value})}/></Field>
+        <Field label="State" required><Input value={editing.state||""} onChange={(e)=>setEditing({...editing,state:e.target.value})}/></Field>
+        <Field label="Country" required><Input value={editing.country||""} onChange={(e)=>setEditing({...editing,country:e.target.value})}/></Field>
+        <Field label="Postal Code" required><Input value={editing.postalCode||""} onChange={(e)=>setEditing({...editing,postalCode:e.target.value})}/></Field>
+        <Field label="Contact Person"><Input value={editing.contactPerson||""} onChange={(e)=>setEditing({...editing,contactPerson:e.target.value})}/></Field>
+        <Field label="Email" required><Input type="email" value={editing.email||""} onChange={(e)=>setEditing({...editing,email:e.target.value})}/></Field>
+        <Field label="Mobile" required><Input value={editing.mobile||""} onChange={(e)=>setEditing({...editing,mobile:e.target.value})}/></Field>
+        <Field label="Status"><Select value={editing.status||"active"} onChange={(e)=>setEditing({...editing,status:e.target.value})}><option value="active">Active</option><option value="inactive">Inactive</option></Select></Field>
+        <Field label="Notes" className="full"><Textarea value={editing.notes||""} onChange={(e)=>setEditing({...editing,notes:e.target.value})}/></Field>
+      </div><div className={tw.formActions}><Button kind="secondary" onClick={()=>setEditing(null)}>Cancel</Button><Button type="submit" disabled={busy}>{busy?"Saving…":"Save Changes"}</Button></div></form></Modal>}
+      {removing&&<ConfirmDialog title="Delete vendor?" message={`Delete “${removing.vendorName}”? Vendors linked to sales or payments must be made inactive instead.`} onClose={()=>setRemoving(null)} onConfirm={remove} busy={busy}/>} 
+      <Toast toast={toast} onClose={()=>setToast(null)}/>
     </>
   );
 }

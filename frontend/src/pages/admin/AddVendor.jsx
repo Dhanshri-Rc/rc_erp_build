@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   BadgeIndianRupee,
   Building2,
@@ -41,12 +41,19 @@ const initial = {
   preferredPaymentMode: "Bank Transfer",
   notes: "",
   status: "active",
+  assignedTo: "",
 };
 export default function AddVendor() {
   const [form, setForm] = useState(initial),
+    [salesUsers, setSalesUsers] = useState([]),
     [toast, setToast] = useState(null),
     [busy, setBusy] = useState(false);
   const set = (k, v) => setForm((x) => ({ ...x, [k]: v }));
+  useEffect(() => {
+    api.get("/users", { params: { role: "sales", status: "active", limit: 100 } })
+      .then((r) => setSalesUsers(r.data.data.items))
+      .catch((err) => setToast({ type: "error", message: err.message }));
+  }, []);
   const submit = async (e) => {
     e.preventDefault();
     setBusy(true);
@@ -69,8 +76,7 @@ export default function AddVendor() {
         <div>
           <h1 className={tw.pageTitleH1}>Add New Vendor</h1>
           <p className={tw.pageTitleP}>
-            Add vendor details to your account. All fields marked with * are
-            required.
+            Create a vendor and assign it to the sales user who can use it in service forms.
           </p>
         </div>
       </div>
@@ -110,6 +116,17 @@ export default function AddVendor() {
                   <option>Research</option>
                   <option>Publication</option>
                   <option>Consulting</option>
+                </Select>
+              </Field>
+              <Field label="Assign to Sales User" required>
+                <Select
+                  value={form.assignedTo}
+                  onChange={(e) => set("assignedTo", e.target.value)}
+                >
+                  <option value="">Select active sales user</option>
+                  {salesUsers.map((u) => (
+                    <option key={u._id} value={u._id}>{u.fullName} (@{u.username})</option>
+                  ))}
                 </Select>
               </Field>
               <Field label="Address" required className="full">
@@ -247,7 +264,7 @@ export default function AddVendor() {
               </Field>
             </div>
             <div className={tw.formActions}>
-              <Button kind="secondary">Cancel</Button>
+              <Button kind="secondary" type="button" onClick={() => setForm(initial)}>Reset</Button>
               <Button type="submit" icon={Save} disabled={busy}>
                 {busy ? "Saving…" : "Save Vendor"}
               </Button>
@@ -306,8 +323,9 @@ export default function AddVendor() {
               <div>
                 <b className={tw.infoRowB}>Information</b>
                 <p className={tw.infoRowP}>
-                  Vendors you create are automatically assigned to your Sales
-                  account and visible to Admin.
+                  Vendors are created only by Admin. Assigned sales users can
+                  select them in authorship and publication forms, but cannot
+                  open the vendor list or edit vendor details.
                 </p>
               </div>
             </div>

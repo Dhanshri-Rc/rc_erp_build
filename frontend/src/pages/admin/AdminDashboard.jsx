@@ -24,7 +24,9 @@ import {
 import { api } from "../../services/api";
 import {
   Badge,
+  Button,
   Panel,
+  Modal,
   Spinner,
   StatCard,
   dateFmt,
@@ -35,9 +37,13 @@ import * as tw from "../../styles/tw";
 const pieColors = ["#6f4cf4", "#14b6bf", "#8aa2e8"];
 export default function AdminDashboard() {
   const [data, setData] = useState(null),
-    [range, setRange] = useState("30");
+    [range, setRange] = useState("30"),
+    [selectedVendorGroup,setSelectedVendorGroup] = useState(null);
   useEffect(() => {
-    api.get("/dashboard/admin").then((r) => setData(r.data.data));
+    const to=new Date();
+    const from=new Date();
+    from.setDate(to.getDate()-Number(range));
+    api.get("/dashboard/admin",{params:{from:from.toISOString(),to:to.toISOString()}}).then((r) => setData(r.data.data));
   }, [range]);
   if (!data) return <Spinner />;
   const m = data.metrics;
@@ -73,9 +79,14 @@ export default function AdminDashboard() {
           </p>
         </div>
         <div className={tw.headActions}>
-          <button className={tw.button.date}>
-            <CalendarDays size={12} /> 01 Aug 2026 - 31 Aug 2026
-          </button>
+          <label className={tw.button.date}>
+            <CalendarDays size={12} />
+            <select className="border-0 bg-transparent outline-none" value={range} onChange={(e)=>setRange(e.target.value)}>
+              <option value="7">Last 7 days</option>
+              <option value="30">Last 30 days</option>
+              <option value="90">Last 90 days</option>
+            </select>
+          </label>
         </div>
       </div>
       <div className={tw.statsGrid}>
@@ -271,7 +282,7 @@ export default function AdminDashboard() {
                     <td className={tw.td}>{v.active}</td>
                     <td className={tw.td}>{v.inactive}</td>
                     <td className={tw.td}>
-                      <button className={tw.actionLink}>View</button>
+                      <button className={tw.actionLink} onClick={()=>setSelectedVendorGroup(v)}>View</button>
                     </td>
                   </tr>
                 ))}
@@ -315,6 +326,10 @@ export default function AdminDashboard() {
           </div>
         </Panel>
       </div>
+      {selectedVendorGroup && <Modal title="Vendor Assignment Summary" onClose={()=>setSelectedVendorGroup(null)}>
+        <div className={tw.detailGrid}>{[["Sales Employee",selectedVendorGroup.employee],["Total Vendors",selectedVendorGroup.total],["Active Vendors",selectedVendorGroup.active],["Inactive Vendors",selectedVendorGroup.inactive]].map(([label,value])=><div className={tw.detailItem} key={label}><span className={tw.detailLabel}>{label}</span><div className={tw.detailValue}>{value}</div></div>)}</div>
+        <div className={tw.formActions}><Link to="/admin/vendors/by-employee"><Button>Open Vendor List</Button></Link></div>
+      </Modal>}
     </>
   );
 }

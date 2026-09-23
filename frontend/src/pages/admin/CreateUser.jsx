@@ -10,17 +10,19 @@ import { api } from "../../services/api";
 import { Button, Field, Input, Select, Toast } from "../../components/UI";
 import * as tw from "../../styles/tw";
 
+const initial = {
+  username: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+  fullName: "",
+  contactNumber: "",
+  role: "sales",
+  status: "active",
+};
+
 export default function CreateUser() {
-  const [form, setForm] = useState({
-      username: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-      fullName: "",
-      contactNumber: "",
-      role: "sales",
-      status: "active",
-    }),
+  const [form, setForm] = useState(initial),
     [toast, setToast] = useState(null),
     [busy, setBusy] = useState(false);
   const set = (k, v) => setForm((x) => ({ ...x, [k]: v }));
@@ -30,16 +32,7 @@ export default function CreateUser() {
     try {
       await api.post("/users", form);
       setToast({ type: "success", message: "User created successfully" });
-      setForm({
-        username: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-        fullName: "",
-        contactNumber: "",
-        role: "sales",
-        status: "active",
-      });
+      setForm(initial);
     } catch (err) {
       setToast({
         type: "error",
@@ -137,7 +130,7 @@ export default function CreateUser() {
               </Field>
             </div>
             <div className={tw.formActions}>
-              <Button kind="secondary" type="button">
+              <Button kind="secondary" type="button" onClick={()=>setForm(initial)}>
                 Cancel
               </Button>
               <Button type="submit" icon={Save} disabled={busy}>

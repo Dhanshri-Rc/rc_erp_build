@@ -5,7 +5,6 @@ import {
   CalendarDays,
   FileText,
   Plus,
-  Store,
   Target,
   UsersRound,
 } from "lucide-react";
@@ -37,22 +36,25 @@ import * as tw from "../../styles/tw";
 export default function SalesDashboard() {
   const { user } = useAuth();
   const nav = useNavigate();
-  const [d, setD] = useState(null);
+  const [d, setD] = useState(null),[range,setRange]=useState("30");
   useEffect(() => {
-    api.get("/dashboard/sales").then((r) => setD(r.data.data));
-  }, []);
+    const to=new Date();
+    const from=new Date();
+    from.setDate(to.getDate()-Number(range));
+    api.get("/dashboard/sales",{params:{from:from.toISOString(),to:to.toISOString()}}).then((r) => setD(r.data.data));
+  }, [range]);
   if (!d) return <Spinner />;
   const m = d.metrics;
   const quick = [
     [
-      "Add New Vendor",
-      "Add a new vendor to your network",
+      "Add New Client",
+      "Create a B-B or B-C client",
       Plus,
-      "/sales/vendors/create",
+      "/sales/clients/create",
     ],
     [
       "Authorship Sale",
-      "Create authorship sale for a vendor",
+      "Book available article positions",
       UsersRound,
       "/sales/authorship-sales/create",
     ],
@@ -62,7 +64,7 @@ export default function SalesDashboard() {
       FileText,
       "/sales/publications/create",
     ],
-    ["My Vendors", "View and manage your vendor list", Store, "/sales/vendors"],
+    ["Client List", "View and manage your clients", UsersRound, "/sales/clients"],
   ];
   return (
     <>
@@ -74,17 +76,22 @@ export default function SalesDashboard() {
           </p>
         </div>
         <div className={tw.headActions}>
-          <button className={tw.button.date}>
-            <CalendarDays size={12} /> 01 Sep 2026 - 30 Sep 2026
-          </button>
+          <label className={tw.button.date}>
+            <CalendarDays size={12} />
+            <select className="border-0 bg-transparent outline-none" value={range} onChange={(e)=>setRange(e.target.value)}>
+              <option value="7">Last 7 days</option>
+              <option value="30">Last 30 days</option>
+              <option value="90">Last 90 days</option>
+            </select>
+          </label>
         </div>
       </div>
       <div className={tw.statsGrid}>
         <StatCard
-          label="Total Vendors"
-          value={m.totalVendors}
-          note={`${m.activeVendors} active vendors`}
-          icon={Store}
+          label="Total Clients"
+          value={m.totalClients}
+          note={`${m.activeClients} active clients`}
+          icon={UsersRound}
         />
         <StatCard
           label="Authorship Sales"
@@ -198,7 +205,7 @@ export default function SalesDashboard() {
         </Panel>
         <Panel
           title="My Tasks"
-          action={<span className={tw.viewLink}>View All</span>}
+          action={<button className={tw.actionLink} onClick={()=>nav("/sales/leads")}>View All</button>}
         >
           <div className={tw.panelPad}>
             {d.tasks.length ? (
@@ -222,7 +229,7 @@ export default function SalesDashboard() {
       <div className={tw.dashboardGridTwo}>
         <Panel
           title="Recent Activities"
-          action={<span className={tw.viewLink}>View All</span>}
+          action={<button className={tw.actionLink} onClick={()=>nav("/sales/activities")}>View All</button>}
         >
           <div className={tw.tableWrap}>
             <table className={tw.dataTable}>
@@ -252,26 +259,26 @@ export default function SalesDashboard() {
           </div>
         </Panel>
         <Panel
-          title="Top Vendors"
-          action={<span className={tw.viewLink}>View All</span>}
+          title="Recent Clients"
+          action={<button className={tw.actionLink} onClick={()=>nav("/sales/clients")}>View All</button>}
         >
           <div className={tw.tableWrap}>
             <table className={tw.dataTable} style={{ minWidth: 480 }}>
               <thead>
                 <tr>
-                  <th className={tw.th}>Vendor</th>
-                  <th className={tw.th}>Total Sales</th>
-                  <th className={tw.th}>Total Value</th>
+                  <th className={tw.th}>Client</th>
+                  <th className={tw.th}>Business Type</th>
+                  <th className={tw.th}>Status</th>
                 </tr>
               </thead>
               <tbody>
-                {d.topVendors.map((v, i) => (
-                  <tr key={i} className={tw.tr}>
+                {d.recentClients.map((v) => (
+                  <tr key={v._id} className={tw.tr}>
                     <td className={tw.td}>
-                      <strong className={tw.tdStrong}>{v.vendor}</strong>
+                      <strong className={tw.tdStrong}>{v.clientName}</strong>
                     </td>
-                    <td className={tw.td}>{v.totalSales}</td>
-                    <td className={tw.td}>{money(v.totalValue)}</td>
+                    <td className={tw.td}>{v.businessType}</td>
+                    <td className={tw.td}><Badge>{v.status}</Badge></td>
                   </tr>
                 ))}
               </tbody>

@@ -3,17 +3,17 @@ import { asyncHandler, ok, pagination, paginateMeta } from '../utils/http.js';
 import { logActivity } from '../utils/audit.js';
 import User from '../models/User.js';
 import { pick } from '../utils/input.js';
+import AuthorshipSale from '../models/AuthorshipSale.js';
+import PublicationService from '../models/PublicationService.js';
+import Payment from '../models/Payment.js';
+import Receipt from '../models/Receipt.js';
 
 const vendorFields = ['vendorName','businessType','vendorCategory','address','city','state','country','postalCode','mobile','alternateMobile','email','contactPerson','designation','vendorSince','gstNumber','panNumber','website','paymentTerms','creditLimit','preferredPaymentMode','status','notes'];
 
-function ownership(req, filter = {}) {
-  if (req.user.role === 'sales') filter.assignedTo = req.user._id;
-  return filter;
-}
 export const listVendors = asyncHandler(async (req, res) => {
   const { page, limit, skip } = pagination(req.query);
-  const filter = ownership(req, {});
-  if (req.query.employee && req.user.role === 'admin') filter.assignedTo = req.query.employee;
+  const filter = {};
+  if (req.query.employee) filter.assignedTo = req.query.employee;
   if (req.query.status) filter.status = req.query.status;
   if (req.query.businessType) filter.businessType = req.query.businessType;
   if (req.query.search) {
@@ -26,25 +26,30 @@ export const listVendors = asyncHandler(async (req, res) => {
   ]);
   return ok(res, { items, pagination: paginateMeta(page, limit, total) });
 });
+export const vendorOptions = asyncHandler(async (req,res) => {
+  const filter = { status:'active' };
+  if (req.user.role === 'sales') filter.assignedTo = req.user._id;
+  const items = await Vendor.find(filter).select('vendorName businessType contactPerson assignedTo').sort({ vendorName:1 }).limit(500);
+  return ok(res, items);
+});
 export const createVendor = asyncHandler(async (req, res) => {
   const required = ['vendorName','businessType','address','city','state','country','postalCode','mobile','email'];
   if (required.some((k) => !req.body[k])) return res.status(422).json({ success:false, message:'Please complete all required vendor fields', errors:[] });
-  const assignedTo = req.user.role === 'sales' ? req.user._id : req.body.assignedTo;
+  const assignedTo = req.body.assignedTo;
   if (!assignedTo || !await User.exists({ _id: assignedTo, role: 'sales', status: 'active' })) return res.status(422).json({ success:false, message:'Assign the vendor to an active sales user', errors:[] });
   const vendor = await Vendor.create({ ...pick(req.body, vendorFields), createdBy:req.user._id, assignedTo });
   await logActivity(req, { action:'VENDOR_CREATED', module:'vendors', entityType:'Vendor', entityId:vendor._id, description:`Added vendor ${vendor.vendorName}` });
   return ok(res, vendor, 'Vendor created successfully', 201);
 });
 export const getVendor = asyncHandler(async (req, res) => {
-  const filter = ownership(req, { _id:req.params.id });
-  const vendor = await Vendor.findOne(filter).populate('assignedTo','fullName username');
+  const vendor = await Vendor.findById(req.params.id).populate('assignedTo','fullName username');
   if (!vendor) return res.status(404).json({ success:false, message:'Vendor not found', errors:[] });
   return ok(res, vendor);
 });
 export const updateVendor = asyncHandler(async (req,res) => {
-  const filter = ownership(req,{_id:req.params.id});
+  const filter = {_id:req.params.id};
   const changes = pick(req.body, vendorFields);
-  if (req.user.role === 'admin' && req.body.assignedTo !== undefined) {
+  if (req.body.assignedTo !== undefined) {
     if (!await User.exists({ _id:req.body.assignedTo, role:'sales', status:'active' })) return res.status(422).json({success:false,message:'Assign the vendor to an active sales user',errors:[]});
     changes.assignedTo = req.body.assignedTo;
   }
@@ -52,4 +57,16 @@ export const updateVendor = asyncHandler(async (req,res) => {
   if (!vendor) return res.status(404).json({success:false,message:'Vendor not found',errors:[]});
   await logActivity(req,{action:'VENDOR_UPDATED',module:'vendors',entityType:'Vendor',entityId:vendor._id,description:`Updated vendor ${vendor.vendorName}`});
   return ok(res,vendor,'Vendor updated successfully');
+});
+
+export const deleteVendor = asyncHandler(async (req,res) => {
+  const linked = await Promise.all([
+    AuthorshipSale.exists({vendor:req.params.id}), PublicationService.exists({vendor:req.params.id}),
+    Payment.exists({vendor:req.params.id}), Receipt.exists({vendor:req.params.id})
+  ]);
+  if (linked.some(Boolean)) return res.status(409).json({success:false,message:'This vendor is linked to sales or payment records. Set it to inactive instead of deleting it.',errors:[]});
+  const vendor = await Vendor.findByIdAndDelete(req.params.id);
+  if (!vendor) return res.status(404).json({success:false,message:'Vendor not found',errors:[]});
+  await logActivity(req,{action:'VENDOR_DELETED',module:'vendors',entityType:'Vendor',entityId:vendor._id,description:`Deleted vendor ${vendor.vendorName}`});
+  return ok(res,null,'Vendor deleted successfully');
 });

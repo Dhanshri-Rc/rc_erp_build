@@ -12,7 +12,7 @@
 - Enforced assignment of vendors/leads to active Sales users.
 - Replaced predictable timestamp references with cryptographically random references.
 - Made authorship prices authoritative on the server using article catalogue pricing.
-- Added MongoDB transactions to sale creation and payment verification/rejection.
+- Added atomic position reservation and compensating rollback to sale creation and payment verification/rejection, compatible with standalone MongoDB.
 - Recalculate outstanding balances from verified payments only.
 - Added atomic duplicate-verification protection and one receipt per payment.
 - Added financial validation and common query indexes.
@@ -26,4 +26,4 @@
 
 ## Deployment requirement
 
-Financial transactions require MongoDB Atlas or another MongoDB replica set. Uploaded files are access-controlled, but use private durable object storage before deploying on an ephemeral hosting platform.
+MongoDB Atlas is recommended for production, but standalone MongoDB is supported. Uploaded files are access-controlled; use private durable object storage before deploying on an ephemeral hosting platform.

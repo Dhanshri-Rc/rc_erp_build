@@ -5,8 +5,16 @@ import { api } from "../../services/api";
 import {
   Badge,
   Button,
+  ConfirmDialog,
+  Field,
+  Input,
+  Modal,
   Pagination,
+  RecordActions,
   SearchBox,
+  Select,
+  Textarea,
+  Toast,
   dateFmt,
   money,
 } from "../../components/UI";
@@ -17,7 +25,12 @@ export default function LeadList() {
     [meta, setMeta] = useState(null),
     [q, setQ] = useState(""),
     [status, setStatus] = useState(""),
-    [page, setPage] = useState(1);
+    [page, setPage] = useState(1),
+    [selected,setSelected]=useState(null),
+    [editing,setEditing]=useState(null),
+    [removing,setRemoving]=useState(null),
+    [toast,setToast]=useState(null),
+    [busy,setBusy]=useState(false);
   const load = () =>
     api
       .get("/leads", { params: { page, limit: 10, search: q, status } })
@@ -28,6 +41,8 @@ export default function LeadList() {
   useEffect(() => {
     load();
   }, [page, status]);
+  const saveEdit=async(e)=>{e.preventDefault();setBusy(true);try{await api.put(`/leads/${editing._id}`,editing);setEditing(null);await load();setToast({type:"success",message:"Lead updated successfully"});}catch(error){setToast({type:"error",message:error.message});}finally{setBusy(false);}};
+  const remove=async()=>{setBusy(true);try{await api.delete(`/leads/${removing._id}`);setRemoving(null);await load();setToast({type:"success",message:"Lead deleted successfully"});}catch(error){setToast({type:"error",message:error.message});}finally{setBusy(false);}};
   return (
     <>
       <div className={tw.pageHead}>
@@ -83,6 +98,7 @@ export default function LeadList() {
                 <th className={tw.th}>Priority</th>
                 <th className={tw.th}>Status</th>
                 <th className={tw.th}>Next Follow-up</th>
+                <th className={tw.th}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -119,6 +135,7 @@ export default function LeadList() {
                     <Badge>{l.status}</Badge>
                   </td>
                   <td className={tw.td}>{dateFmt(l.nextFollowUpDate)}</td>
+                  <td className={tw.td}><RecordActions onView={()=>setSelected(l)} onEdit={()=>setEditing({...l,nextFollowUpDate:l.nextFollowUpDate?.slice?.(0,10)||""})} onDelete={()=>setRemoving(l)}/></td>
                 </tr>
               ))}
             </tbody>
@@ -126,6 +143,22 @@ export default function LeadList() {
         </div>
         <Pagination meta={meta} onPage={setPage} />
       </div>
+      {selected&&<Modal title="Lead Details" onClose={()=>setSelected(null)} wide><div className={tw.detailGrid}>{[["Lead Reference",selected.leadNo],["Lead Title",selected.leadTitle],["Lead For",selected.leadFor||"—"],["Contact",selected.contactName],["Email",selected.email||"—"],["Mobile",selected.mobile||"—"],["Organization",selected.organization||"—"],["Budget",money(selected.targetBudget)],["Priority",selected.priority],["Status",selected.status],["Next Follow-up",dateFmt(selected.nextFollowUpDate)],["Description",selected.description||"—"]].map(([label,value])=><div className={tw.detailItem} key={label}><span className={tw.detailLabel}>{label}</span><div className={tw.detailValue}>{value}</div></div>)}</div></Modal>}
+      {editing&&<Modal title="Edit Lead" onClose={()=>setEditing(null)} wide><form onSubmit={saveEdit}><div className={tw.formGridThree}>
+        <Field label="Lead Title" required><Input value={editing.leadTitle} onChange={(e)=>setEditing({...editing,leadTitle:e.target.value})}/></Field>
+        <Field label="Contact Name" required><Input value={editing.contactName} onChange={(e)=>setEditing({...editing,contactName:e.target.value})}/></Field>
+        <Field label="Organization"><Input value={editing.organization||""} onChange={(e)=>setEditing({...editing,organization:e.target.value})}/></Field>
+        <Field label="Email"><Input type="email" value={editing.email||""} onChange={(e)=>setEditing({...editing,email:e.target.value})}/></Field>
+        <Field label="Mobile"><Input value={editing.mobile||""} onChange={(e)=>setEditing({...editing,mobile:e.target.value})}/></Field>
+        <Field label="Budget"><Input type="number" min="0" value={editing.targetBudget||""} onChange={(e)=>setEditing({...editing,targetBudget:e.target.value})}/></Field>
+        <Field label="Priority"><Select value={editing.priority} onChange={(e)=>setEditing({...editing,priority:e.target.value})}><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option><option value="urgent">Urgent</option></Select></Field>
+        <Field label="Status"><Select value={editing.status} onChange={(e)=>setEditing({...editing,status:e.target.value})}>{["new","contacted","discussion","proposal","negotiation","converted","closed"].map((x)=><option key={x} value={x}>{x}</option>)}</Select></Field>
+        <Field label="Next Follow-up"><Input type="date" value={editing.nextFollowUpDate||""} onChange={(e)=>setEditing({...editing,nextFollowUpDate:e.target.value})}/></Field>
+        <Field label="Description" className="full"><Textarea value={editing.description||""} onChange={(e)=>setEditing({...editing,description:e.target.value})}/></Field>
+        <Field label="Remarks" className="full"><Textarea value={editing.remarks||""} onChange={(e)=>setEditing({...editing,remarks:e.target.value})}/></Field>
+      </div><div className={tw.formActions}><Button kind="secondary" onClick={()=>setEditing(null)}>Cancel</Button><Button type="submit" disabled={busy}>{busy?"Saving…":"Save Changes"}</Button></div></form></Modal>}
+      {removing&&<ConfirmDialog title="Delete lead?" message={`Delete “${removing.leadTitle}”? This action cannot be undone.`} onClose={()=>setRemoving(null)} onConfirm={remove} busy={busy}/>} 
+      <Toast toast={toast} onClose={()=>setToast(null)}/>
     </>
   );
 }

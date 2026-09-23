@@ -36,7 +36,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { api } from "../services/api";
-import { initials } from "./UI";
+import { Button, Modal, initials } from "./UI";
 
 const sections = {
   admin: [
@@ -52,8 +52,17 @@ const sections = {
     [
       "VENDOR MANAGEMENT",
       [
+        ["Add Vendor", "/admin/vendors/create", UserPlus],
         ["All Vendors", "/admin/vendors", Store],
         ["Vendors by Employee", "/admin/vendors/by-employee", Users],
+      ],
+    ],
+    [
+      "PUBLICATION INVENTORY",
+      [
+        ["Journals", "/admin/journals", BookOpen],
+        ["Articles", "/admin/articles", FileText],
+        ["Authorship Positions", "/admin/authorship-inventory", HandCoins],
       ],
     ],
     [
@@ -78,9 +87,11 @@ const sections = {
     [
       "MARKETING / SALES",
       [
-        ["Vendors", "/sales/vendors", Store],
-        ["Add Vendor", "/sales/vendors/create", UserPlus],
+        ["Add Client", "/sales/clients/create", UserPlus],
+        ["Client List", "/sales/clients", Users],
+        ["Authorship Sales", "/sales/authorship-sales", HandCoins],
         ["Authorship Sale", "/sales/authorship-sales/create", HandCoins],
+        ["Publication List", "/sales/publications", BookOpen],
         ["Direct Paper Publication", "/sales/publications/create", FileText],
         ["Lead Generation", "/sales/leads/create", Target],
         ["My Activities", "/sales/activities", Activity],
@@ -91,7 +102,6 @@ const sections = {
       "REPORTS",
       [
         ["Sales Reports", "/sales/reports", BarChart3],
-        ["Vendor Reports", "/sales/vendor-reports", BriefcaseBusiness],
         ["Activity Reports", "/sales/activity-reports", ClipboardList],
       ],
     ],
@@ -149,10 +159,14 @@ export default function Layout() {
   const [open, setOpen] = useState(false),
     [notifications, setNotifications] = useState({ items: [], unread: 0 }),
     [drop, setDrop] = useState(false),
-    [profileMenu, setProfileMenu] = useState(false);
+    [profileMenu, setProfileMenu] = useState(false),
+    [topProfileMenu,setTopProfileMenu]=useState(false),
+    [help,setHelp]=useState(false);
   useEffect(() => {
     setOpen(false);
     setProfileMenu(false);
+    setTopProfileMenu(false);
+    setDrop(false);
   }, [loc.pathname]);
   useEffect(() => {
     if (user)
@@ -173,6 +187,13 @@ export default function Layout() {
       items: x.items.map((i) => ({ ...i, read: true })),
     }));
   };
+  const openNotification=async(notification)=>{
+    if(!notification.read) await api.patch(`/notifications/${notification._id}/read`).catch(()=>{});
+    setNotifications((current)=>({...current,unread:Math.max(0,current.unread-(notification.read?0:1)),items:current.items.map((item)=>item._id===notification._id?{...item,read:true}:item)}));
+    setDrop(false);
+    if(notification.link) nav(notification.link);
+  };
+  const dashboard=`/${user.role}/dashboard`;
   return (
     <div className="min-h-screen">
       <div
@@ -185,10 +206,10 @@ export default function Layout() {
       />
       <aside className={`${sidebarBase} ${open ? sidebarOpen : ""}`}>
         <div className="h-[72px] flex shrink-0 items-center px-[19px] border-b border-[#f0f1f6]">
-          <div className="flex items-center gap-[7px] font-bold text-[13px]">
+          <button type="button" onClick={()=>nav(dashboard)} className="flex items-center gap-[7px] border-0 bg-transparent p-0 font-bold text-[13px]">
             <img className="w-8 h-[30px] object-cover" src="/rc-logo.png" /> RC
             ERP
-          </div>
+          </button>
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden py-[11px] px-[10px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {sections[user.role].map(([group, items]) => (
@@ -266,7 +287,7 @@ export default function Layout() {
               {open ? <X /> : <Menu />}
             </button>
             <div className="flex items-center gap-[7px] text-[9px] text-[#8d94a5] max-[680px]:hidden">
-              <span>Dashboard</span>
+              <button type="button" className="border-0 bg-transparent p-0 text-[#6d49ef]" onClick={()=>nav(dashboard)}>Dashboard</button>
               <span>›</span>
               <span>
                 {loc.pathname
@@ -304,8 +325,9 @@ export default function Layout() {
                     </div>
                     {notifications.items.length ? (
                       notifications.items.slice(0, 7).map((n) => (
-                        <div
+                        <button type="button"
                           key={n._id}
+                          onClick={()=>openNotification(n)}
                           className={`px-[13px] py-[11px] border-b border-[#f2f3f6] flex gap-2 bg-white last:border-b-0 ${n.read ? "" : "bg-[#fbf9ff]"}`}
                         >
                           <Bell size={13} color="#7450ef" />
@@ -318,7 +340,7 @@ export default function Layout() {
                               {new Date(n.createdAt).toLocaleString()}
                             </time>
                           </div>
-                        </div>
+                        </button>
                       ))
                     ) : (
                       <div className="p-[30px] text-center text-[#9aa0ae] text-[9px]">
@@ -329,10 +351,11 @@ export default function Layout() {
                 )}
               </AnimatePresence>
             </div>
-            <button className={iconBtn}>
+            <button className={iconBtn} onClick={()=>setHelp(true)} aria-label="Help">
               <CircleHelp />
             </button>
-            <div className="flex items-center gap-2 pl-1">
+            <div className="relative">
+            <button type="button" onClick={()=>setTopProfileMenu((value)=>!value)} className="flex items-center gap-2 border-0 bg-transparent pl-1 text-left" aria-expanded={topProfileMenu}>
               <div className="w-7 h-7 rounded-full bg-[#f0ebff] text-[#7250ef] grid place-items-center font-bold text-[9px] border border-[#e1d8ff]">
                 {initials(user.fullName)}
               </div>
@@ -342,7 +365,9 @@ export default function Layout() {
                   {roleLabel[user.role]}
                 </span>
               </div>
-              <ChevronDown size={11} />
+              <ChevronDown size={11} className={`transition-transform ${topProfileMenu?"rotate-180":""}`}/>
+            </button>
+            <AnimatePresence>{topProfileMenu&&<motion.div initial={{opacity:0,y:-4}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-4}} className="absolute right-0 top-[40px] z-[80] w-[170px] rounded-[8px] border border-[#e8eaf1] bg-white p-1 shadow-[0_12px_30px_rgba(34,40,74,0.15)]"><button type="button" onClick={()=>nav(dashboard)} className="flex h-9 w-full items-center gap-2 rounded-[5px] border-0 bg-transparent px-3 text-left text-[12px] text-[#596176] hover:bg-[#f7f5ff]"><Home size={13}/>Dashboard</button><button type="button" onClick={signout} className="flex h-9 w-full items-center gap-2 rounded-[5px] border-0 bg-transparent px-3 text-left text-[12px] text-[#e5484d] hover:bg-[#fff1f1]"><LogOut size={13}/>Logout</button></motion.div>}</AnimatePresence>
             </div>
           </div>
         </header>
@@ -350,6 +375,7 @@ export default function Layout() {
           <Outlet />
         </div>
       </main>
+      {help&&<Modal title="RC ERP Help" onClose={()=>setHelp(false)}><div className="grid gap-3 text-[12px] leading-6 text-[#697185]"><p className="m-0">Use the left navigation to open each role-protected module. List pages now include View, Edit and Delete actions for records you are allowed to manage.</p><p className="m-0">If Delete is blocked, the record is linked to a booking, payment or audit record. Change its status to inactive instead.</p></div><div className="mt-4 flex justify-end"><Button onClick={()=>setHelp(false)}>Got it</Button></div></Modal>}
     </div>
   );
 }

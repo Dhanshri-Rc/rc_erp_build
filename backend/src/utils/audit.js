@@ -14,7 +14,9 @@ export async function notifyUser(user, payload, options = {}) {
 }
 
 export async function notifyRoles(roles, payload, options = {}) {
-  const users = await User.find({ role: { $in: roles }, status: 'active' }).select('_id').session(options.session || null);
+  const query = User.find({ role: { $in: roles }, status: 'active' }).select('_id');
+  if (options.session) query.session(options.session);
+  const users = await query;
   if (!users.length) return [];
   return Notification.insertMany(users.map((u) => ({ user: u._id, ...payload })), options);
 }

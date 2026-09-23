@@ -11,12 +11,17 @@ A full-stack MERN implementation recreated from the supplied RC ERP reference sc
   - Finance → `/finance/dashboard`
 - Backend and frontend role protection. Typing another role's URL does not grant access.
 - Admin-only creation of Sales/Marketing and Finance/Accounting users.
-- Admin Users List with search, role/status filters, pagination, enable/disable and password reset.
-- Admin Vendors and Vendors-by-Employee views.
-- Sales vendor creation and owned-vendor listing.
-- Authorship Sale workflow with journal/article selection, available POS protection, pricing and payment proof upload.
-- Direct Paper Publication workflow with vendor, journal/issue, pricing, payment and manuscript details.
+- Admin Users List with search, role/status filters, pagination, View/Edit/Delete actions, enable/disable and password reset.
+- Admin-only vendor creation, vendor list and Vendors-by-Employee views. Sales receives only assigned active vendors in service-form dropdowns.
+- Admin journal form/list with Journal Title, ISSN No. and Web URL.
+- Admin article form/list with linked journal, Article Title, ISSN No., Web URL and configurable total positions.
+- Admin Authorship Position Setup form for changing a selected article's 1–N position range.
+- Sales-only Client form/list with B-B and B-C business types.
+- Authorship Sale workflow with exact position selection, per-position author/department/college details, booked-position visibility and atomic duplicate-booking protection.
+- Direct Paper Publication workflow with a manual Issue/Volume field and conditional payment section: hidden for zero advance, full INR transaction details for INR advances, and screenshot-only proof for USD advances.
 - Lead Generation workflow plus recent lead table and follow-up tracking.
+- Consistent responsive View/Edit/Delete actions for users, vendors, journals, articles, clients, leads, authorship sales and publication services. Dependency checks protect booked, linked and financially verified records.
+- Fully interactive navigation: dashboard/logo links, notifications, mobile menu, profile menus, help and logout controls.
 - Finance Dashboard and Payment Verification queue.
 - Finance verification/rejection creates audit events; verification generates a numbered receipt.
 - Header notifications are backed by MongoDB.
@@ -87,7 +92,7 @@ cd backend
 npm install
 ```
 
-The ZIP includes a local-development `.env`. To use MongoDB Atlas, replace `MONGODB_URI` in `backend/.env`.
+Copy `backend/.env.example` to `backend/.env`, then set your MongoDB connection, JWT secret and admin seed credentials.
 
 Seed demo data:
 
@@ -128,10 +133,10 @@ These credentials are for local development only. Change all production credenti
 ## Important role rules
 
 ### Admin
-Admin can create Sales and Finance users, manage users, view all vendors, inspect employee vendor assignments, verify payments, view receipts and system-level data.
+Admin can create Sales and Finance users, manage users, create and view vendors, assign vendors to Sales users, manage journals/articles/authorship positions, inspect employee vendor assignments, verify payments, view receipts and system-level data.
 
 ### Sales / Marketing
-Sales can manage only their own/assigned vendors, authorship sales, publication services and leads. The backend enforces ownership; frontend filtering is not used as a security boundary.
+Sales can create and view their own B-B/B-C clients, select assigned admin-created vendors, book available authorship positions, create publication services and manage leads. Sales cannot create, list, edit or export vendors. The backend enforces all role and ownership rules.
 
 ### Finance / Accounting
 Finance can review payments, verify or reject them, work with receipts and see finance dashboards. Finance cannot create users or access Admin/Sales routes.
@@ -144,17 +149,30 @@ POST /api/auth/logout
 GET  /api/auth/me
 
 GET/POST /api/users                 (Admin only)
+GET/PUT/DELETE /api/users/:id       (Admin only; safe-delete rules apply)
 PATCH    /api/users/:id/status      (Admin only)
 POST     /api/users/:id/reset-password
 
-GET/POST /api/vendors
+GET/POST /api/vendors                 (Admin only)
+GET/PUT/DELETE /api/vendors/:id       (Admin only; safe-delete rules apply)
+GET      /api/vendors/options         (Admin/Sales dropdown)
+GET/POST /api/clients                 (Sales only)
+GET/PUT/DELETE /api/clients/:id       (Sales owner only)
 GET      /api/catalog/journals
 GET      /api/catalog/articles
 GET      /api/catalog/issues
+POST     /api/catalog/journals        (Admin only)
+PUT/DELETE /api/catalog/journals/:id  (Admin only; linked journals cannot be deleted)
+POST     /api/catalog/articles        (Admin only)
+PUT/DELETE /api/catalog/articles/:id  (Admin only; booked articles cannot be deleted)
+PATCH    /api/catalog/articles/:id/positions
 
 GET/POST /api/sales/authorship
+GET/PUT/DELETE /api/sales/authorship/:id
 GET/POST /api/sales/publications
+GET/PUT/DELETE /api/sales/publications/:id
 GET/POST /api/leads
+GET/PUT/DELETE /api/leads/:id
 
 GET   /api/payments
 PATCH /api/payments/:id/verify
@@ -173,12 +191,12 @@ PATCH /api/notifications/read-all
 
 1. Admin logs in and creates a Sales user.
 2. That user can immediately log in and is redirected to the Sales Dashboard.
-3. Sales creates a Vendor. The backend automatically assigns the vendor to that Sales user.
-4. Admin can see the vendor under Vendors by Employee.
-5. Sales creates an Authorship Sale or Direct Publication with an advance payment.
-6. A Payment record is created and Finance receives a notification.
-7. Finance verifies the payment.
-8. RC ERP creates a receipt and audit activity and notifies Sales/Admin.
+3. Admin creates a Vendor and assigns it to the Sales user.
+4. Admin creates journals, articles and each article's total author position range.
+5. Sales creates B-B/B-C clients and can select the assigned Vendor in service forms.
+6. Sales books one or more available author positions. Booked positions immediately show the author and affiliation and cannot be booked again.
+7. Sales creates a Direct Publication; an advance above zero creates a Finance verification record.
+8. Finance verifies the payment, and RC ERP creates a receipt and audit activity.
 9. Dashboard data updates from MongoDB aggregation endpoints.
 
 ## Reference UI
@@ -192,7 +210,7 @@ Before deployment:
 - Copy `.env.example` to `.env` locally; never commit or distribute `.env` files.
 - Use a strong unique `JWT_SECRET` containing at least 32 random characters.
 - Use a production MongoDB URI.
-- MongoDB must be a replica set (MongoDB Atlas is suitable) because financial writes use transactions.
+- Both standalone MongoDB and MongoDB Atlas/replica-set deployments are supported. Critical writes use atomic reservations plus compensating rollback.
 - Set `NODE_ENV=production`.
 - Set `FRONTEND_URL` to the deployed frontend domain.
 - Set `TRUST_PROXY=true` when the API is behind one trusted reverse proxy such as Render.

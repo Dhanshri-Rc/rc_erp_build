@@ -14,9 +14,14 @@ import { api } from "../../services/api";
 import {
   Badge,
   Button,
+  ConfirmDialog,
+  Field,
+  Input,
   Modal,
   Pagination,
+  RecordActions,
   SearchBox,
+  Select,
   StatCard,
   Toast,
   dateFmt,
@@ -32,6 +37,9 @@ export default function UserList() {
     [status, setStatus] = useState(""),
     [page, setPage] = useState(1),
     [stats, setStats] = useState({}),
+    [selected,setSelected] = useState(null),
+    [editing,setEditing] = useState(null),
+    [removing,setRemoving] = useState(null),
     [reset, setReset] = useState(null),
     [password, setPassword] = useState(""),
     [toast, setToast] = useState(null);
@@ -74,6 +82,8 @@ export default function UserList() {
       setToast({ type: "error", message: e.message });
     }
   };
+  const saveEdit=async(e)=>{e.preventDefault();try{await api.put(`/users/${editing._id}`,{fullName:editing.fullName,contactNumber:editing.contactNumber,status:editing.status});setEditing(null);await load();setToast({type:"success",message:"User updated successfully"});}catch(error){setToast({type:"error",message:error.message});}};
+  const remove=async()=>{try{await api.delete(`/users/${removing._id}`);setRemoving(null);await load();setToast({type:"success",message:"User deleted successfully"});}catch(error){setToast({type:"error",message:error.message});}};
   return (
     <>
       <div className={tw.pageHead}>
@@ -211,6 +221,7 @@ export default function UserList() {
                   <td className={tw.td}>{dateFmt(u.createdAt)}</td>
                   <td className={tw.td}>
                     <div className={tw.inlineActions}>
+                      <RecordActions onView={()=>setSelected(u)} onEdit={()=>setEditing({...u})} onDelete={u.role!=="admin"?()=>setRemoving(u):undefined}/>
                       {u.role !== "admin" && (
                         <>
                           <button
@@ -239,6 +250,14 @@ export default function UserList() {
         </div>
         <Pagination meta={meta} onPage={setPage} />
       </div>
+      {selected&&<Modal title="User Details" onClose={()=>setSelected(null)}><div className={tw.detailGrid}>{[["Full Name",selected.fullName],["Username",`@${selected.username}`],["Email",selected.email],["Contact Number",selected.contactNumber||"—"],["Role",selected.role],["Status",selected.status],["Created",dateFmt(selected.createdAt)],["Last Login",dateFmt(selected.lastLogin)]].map(([label,value])=><div className={tw.detailItem} key={label}><span className={tw.detailLabel}>{label}</span><div className={tw.detailValue}>{value}</div></div>)}</div></Modal>}
+      {editing&&<Modal title="Edit User" onClose={()=>setEditing(null)}><form onSubmit={saveEdit}><div className={tw.formGrid}>
+        <Field label="Full Name" required><Input value={editing.fullName} onChange={(e)=>setEditing({...editing,fullName:e.target.value})}/></Field>
+        <Field label="Contact Number"><Input value={editing.contactNumber||""} onChange={(e)=>setEditing({...editing,contactNumber:e.target.value})}/></Field>
+        <Field label="Username"><Input value={editing.username} disabled/></Field><Field label="Email"><Input value={editing.email} disabled/></Field>
+        <Field label="Status"><Select value={editing.status} onChange={(e)=>setEditing({...editing,status:e.target.value})}><option value="active">Active</option><option value="inactive">Inactive</option></Select></Field>
+      </div><div className={tw.formActions}><Button kind="secondary" onClick={()=>setEditing(null)}>Cancel</Button><Button type="submit">Save Changes</Button></div></form></Modal>}
+      {removing&&<ConfirmDialog title="Delete user?" message={`Delete “${removing.fullName}”? Users with business records must be deactivated instead.`} onClose={()=>setRemoving(null)} onConfirm={remove}/>} 
       {reset && (
         <Modal
           title={`Reset password — ${reset.fullName}`}

@@ -1,5 +1,6 @@
 import User from '../models/User.js';
 import Vendor from '../models/Vendor.js';
+import Client from '../models/Client.js';
 import AuthorshipSale from '../models/AuthorshipSale.js';
 import PublicationService from '../models/PublicationService.js';
 import Lead from '../models/Lead.js';
@@ -34,12 +35,12 @@ export const adminDashboard=asyncHandler(async(req,res)=>{
 });
 
 export const salesDashboard=asyncHandler(async(req,res)=>{
-  const owner={createdBy:req.user._id,...dateMatch(req.query)}; const vendorFilter={assignedTo:req.user._id};
-  const [totalVendors,activeVendors,authorshipSales,publicationCount,authorshipDocs,pubDocs,recentActivities,topVendors,tasks,monthAuth,monthPub]=await Promise.all([
-    Vendor.countDocuments(vendorFilter),Vendor.countDocuments({...vendorFilter,status:'active'}),AuthorshipSale.countDocuments(owner),PublicationService.countDocuments(owner),
+  const owner={createdBy:req.user._id,...dateMatch(req.query)}; const clientFilter={createdBy:req.user._id};
+  const [totalClients,activeClients,authorshipSales,publicationCount,authorshipDocs,pubDocs,recentActivities,recentClients,tasks,monthAuth,monthPub]=await Promise.all([
+    Client.countDocuments(clientFilter),Client.countDocuments({...clientFilter,status:'active'}),AuthorshipSale.countDocuments(owner),PublicationService.countDocuments(owner),
     AuthorshipSale.find(owner).populate('vendor','vendorName').sort({createdAt:-1}),PublicationService.find(owner).populate('vendor','vendorName').sort({createdAt:-1}),
     ActivityLog.find({user:req.user._id}).sort({createdAt:-1}).limit(6),
-    AuthorshipSale.aggregate([{$match:{createdBy:req.user._id}},{$group:{_id:'$vendor',count:{$sum:1},value:{$sum:'$totalPrice'}}},{$sort:{value:-1}},{$limit:5},{$lookup:{from:'vendors',localField:'_id',foreignField:'_id',as:'vendor'}},{$unwind:'$vendor'}]),
+    Client.find(clientFilter).sort({createdAt:-1}).limit(5),
     Lead.find({assignedTo:req.user._id,status:{$nin:['converted','closed']}}).sort({nextFollowUpDate:1}).limit(5),
     monthly(AuthorshipSale,{createdBy:req.user._id},'totalPrice'),monthly(PublicationService,{createdBy:req.user._id},'totalAmount')
   ]);
@@ -47,7 +48,7 @@ export const salesDashboard=asyncHandler(async(req,res)=>{
   const leads=await Lead.countDocuments({createdBy:req.user._id}); const converted=await Lead.countDocuments({createdBy:req.user._id,status:'converted'}); const conversionRate=leads?Math.round((converted/leads)*100):0;
   const keys=[...new Set([...monthAuth,...monthPub].map(x=>`${x._id.y}-${x._id.m}`))];
   const salesOverview=keys.map(k=>{const [y,m]=k.split('-').map(Number); const a=monthAuth.find(x=>x._id.y===y&&x._id.m===m);const p=monthPub.find(x=>x._id.y===y&&x._id.m===m);return {name:new Date(y,m-1,1).toLocaleString('en',{month:'short'}),authorship:a?.value||0,publication:p?.value||0};});
-  return ok(res,{metrics:{totalVendors,activeVendors,authorshipSales,publicationCount,totalValue,conversionRate},salesOverview,serviceDistribution:[{name:'Authorship Sale',value:authorshipSales},{name:'Direct Publication',value:publicationCount}],tasks,recentActivities,topVendors:topVendors.map(x=>({vendor:x.vendor.vendorName,totalSales:x.count,totalValue:x.value}))});
+  return ok(res,{metrics:{totalClients,activeClients,authorshipSales,publicationCount,totalValue,conversionRate},salesOverview,serviceDistribution:[{name:'Authorship Sale',value:authorshipSales},{name:'Direct Publication',value:publicationCount}],tasks,recentActivities,recentClients});
 });
 
 export const financeDashboard=asyncHandler(async(req,res)=>{

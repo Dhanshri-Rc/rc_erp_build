@@ -8,6 +8,7 @@ import morgan from 'morgan';
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import vendorRoutes from './routes/vendorRoutes.js';
+import clientRoutes from './routes/clientRoutes.js';
 import journalRoutes from './routes/journalRoutes.js';
 import salesRoutes from './routes/salesRoutes.js';
 import leadRoutes from './routes/leadRoutes.js';
@@ -41,6 +42,7 @@ app.get('/api/health', (_, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/vendors', vendorRoutes);
+app.use('/api/clients', clientRoutes);
 app.use('/api/catalog', journalRoutes);
 app.use('/api/sales', salesRoutes);
 app.use('/api/leads', leadRoutes);

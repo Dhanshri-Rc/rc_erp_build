@@ -7,12 +7,16 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import CreateUser from "./pages/admin/CreateUser";
 import UserList from "./pages/admin/UserList";
 import AdminVendors from "./pages/admin/AdminVendors";
+import JournalManagement from "./pages/admin/JournalManagement";
+import ArticleManagement from "./pages/admin/ArticleManagement";
+import AuthorshipInventory from "./pages/admin/AuthorshipInventory";
 import SalesDashboard from "./pages/sales/SalesDashboard";
-import AddVendor from "./pages/sales/AddVendor";
+import AddVendor from "./pages/admin/AddVendor";
+import ClientForm from "./pages/sales/ClientForm";
+import ClientList from "./pages/sales/ClientList";
 import AuthorshipSale from "./pages/sales/AuthorshipSale";
 import Publication from "./pages/sales/Publication";
 import LeadGeneration from "./pages/sales/LeadGeneration";
-import VendorList from "./pages/sales/VendorList";
 import SalesRecords from "./pages/sales/SalesRecords";
 import LeadList from "./pages/sales/LeadList";
 import FinanceDashboard from "./pages/finance/FinanceDashboard";
@@ -51,10 +55,14 @@ export default function App() {
               }
             />
             <Route path="/admin/vendors" element={<AdminVendors />} />
+            <Route path="/admin/vendors/create" element={<AddVendor />} />
             <Route
               path="/admin/vendors/by-employee"
               element={<AdminVendors byEmployee />}
             />
+            <Route path="/admin/journals" element={<JournalManagement />} />
+            <Route path="/admin/articles" element={<ArticleManagement />} />
+            <Route path="/admin/authorship-inventory" element={<AuthorshipInventory />} />
             <Route path="/admin/payments" element={<Payments admin />} />
             <Route path="/admin/receipts" element={<Receipts />} />
             <Route
@@ -96,8 +104,8 @@ export default function App() {
           </Route>
           <Route element={<RoleOnly role="sales" />}>
             <Route path="/sales/dashboard" element={<SalesDashboard />} />
-            <Route path="/sales/vendors" element={<VendorList />} />
-            <Route path="/sales/vendors/create" element={<AddVendor />} />
+            <Route path="/sales/clients" element={<ClientList />} />
+            <Route path="/sales/clients/create" element={<ClientForm />} />
             <Route path="/sales/authorship-sales" element={<SalesRecords />} />
             <Route
               path="/sales/authorship-sales/create"
@@ -132,7 +140,6 @@ export default function App() {
                 />
               }
             />
-            <Route path="/sales/vendor-reports" element={<VendorList />} />
             <Route
               path="/sales/activity-reports"
               element={<Placeholder title="Activity Reports" />}

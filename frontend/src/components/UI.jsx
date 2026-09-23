@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Download, Search } from "lucide-react";
+import { ChevronLeft, ChevronRight, Download, Eye, Pencil, Search, Trash2, X } from "lucide-react";
 import * as tw from "../styles/tw";
 
 export const money = (n) => `₹${Number(n || 0).toLocaleString("en-IN")}`;
@@ -220,18 +220,52 @@ export function Toast({ toast, onClose }) {
     </motion.div>
   );
 }
-export function Modal({ title, children, onClose }) {
+export function Modal({ title, children, onClose, wide = false }) {
   return (
-    <div className={tw.modalBackdrop} onMouseDown={onClose}>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className={tw.modalBackdrop}
+      onMouseDown={onClose}
+    >
       <motion.div
-        initial={{ opacity: 0, scale: 0.98 }}
+        initial={{ opacity: 0, scale: 0.96, y: 14 }}
         animate={{ opacity: 1, scale: 1 }}
-        className={tw.modal}
+        transition={{ type: "spring", stiffness: 320, damping: 27 }}
+        className={`${tw.modal} ${wide ? tw.modalWide : ""}`}
         onMouseDown={(e) => e.stopPropagation()}
       >
-        <h3 className={tw.modalH3}>{title}</h3>
-        {children}
+        <div className={tw.modalHeader}>
+          <h3 className={tw.modalH3}>{title}</h3>
+          <button className={tw.modalClose} onClick={onClose} aria-label="Close">
+            <X />
+          </button>
+        </div>
+        <div className={tw.modalBody}>{children}</div>
       </motion.div>
+    </motion.div>
+  );
+}
+
+export function RecordActions({ onView, onEdit, onDelete }) {
+  return (
+    <div className={tw.inlineActions}>
+      {onView && <button type="button" className={tw.actionLink} onClick={onView} title="View"><Eye size={12}/> View</button>}
+      {onEdit && <button type="button" className={tw.actionLink} onClick={onEdit} title="Edit"><Pencil size={12}/> Edit</button>}
+      {onDelete && <button type="button" className={tw.actionDelete} onClick={onDelete} title="Delete"><Trash2 size={12}/> Delete</button>}
     </div>
+  );
+}
+
+export function ConfirmDialog({ title="Delete record?", message, onClose, onConfirm, busy=false }) {
+  return (
+    <Modal title={title} onClose={busy ? undefined : onClose}>
+      <p className="m-0 text-[12px] leading-6 text-[#697185]">{message}</p>
+      <div className={tw.formActions}>
+        <Button kind="secondary" onClick={onClose} disabled={busy}>Cancel</Button>
+        <Button kind="danger" onClick={onConfirm} disabled={busy}>{busy ? "Deleting…" : "Delete"}</Button>
+      </div>
+    </Modal>
   );
 }

@@ -4,6 +4,7 @@ import { logActivity, notifyUser } from '../utils/audit.js';
 import User from '../models/User.js';
 import { pick } from '../utils/input.js';
 import crypto from 'crypto';
+import fs from 'fs/promises';
 
 const refNo=()=>`LEAD-${new Date().getFullYear()}-${crypto.randomBytes(5).toString('hex').toUpperCase()}`;
 const baseFilter=(req)=>req.user.role==='sales'?{$or:[{createdBy:req.user._id},{assignedTo:req.user._id}]}:{};
@@ -14,6 +15,11 @@ export const listLeads=asyncHandler(async(req,res)=>{
   if(req.query.search){const re=new RegExp(req.query.search.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'i'); filter.$and=[{$or:[{leadTitle:re},{contactName:re},{organization:re},{email:re}]}];}
   const [items,total]=await Promise.all([Lead.find(filter).populate('assignedTo','fullName').populate('createdBy','fullName').sort({createdAt:-1}).skip(skip).limit(limit),Lead.countDocuments(filter)]);
   return ok(res,{items,pagination:paginateMeta(page,limit,total)});
+});
+export const getLead=asyncHandler(async(req,res)=>{
+  const lead=await Lead.findOne({_id:req.params.id,...(req.user.role==='sales'?baseFilter(req):{})}).populate('assignedTo','fullName').populate('createdBy','fullName');
+  if(!lead)return res.status(404).json({success:false,message:'Lead not found',errors:[]});
+  return ok(res,lead);
 });
 export const createLead=asyncHandler(async(req,res)=>{
   const assignedTo=req.user.role==='sales'?req.user._id:req.body.assignedTo;
@@ -35,4 +41,11 @@ export const updateLead=asyncHandler(async(req,res)=>{
   if(!lead)return res.status(404).json({success:false,message:'Lead not found',errors:[]});
   await logActivity(req,{action:'LEAD_UPDATED',module:'leads',entityType:'Lead',entityId:lead._id,description:`Updated lead ${lead.leadNo}`});
   return ok(res,lead,'Lead updated successfully');
+});
+export const deleteLead=asyncHandler(async(req,res)=>{
+  const lead=await Lead.findOneAndDelete({_id:req.params.id,...(req.user.role==='sales'?baseFilter(req):{})});
+  if(!lead)return res.status(404).json({success:false,message:'Lead not found',errors:[]});
+  if(lead.attachment) await fs.unlink(lead.attachment).catch(()=>{});
+  await logActivity(req,{action:'LEAD_DELETED',module:'leads',entityType:'Lead',entityId:lead._id,description:`Deleted lead ${lead.leadNo}`});
+  return ok(res,null,'Lead deleted successfully');
 });

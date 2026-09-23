@@ -2,6 +2,15 @@ import User from '../models/User.js';
 import { asyncHandler, ok, pagination, paginateMeta } from '../utils/http.js';
 import { logActivity, notifyUser } from '../utils/audit.js';
 import Session from '../models/Session.js';
+import Notification from '../models/Notification.js';
+import ActivityLog from '../models/ActivityLog.js';
+import Vendor from '../models/Vendor.js';
+import Client from '../models/Client.js';
+import Lead from '../models/Lead.js';
+import AuthorshipSale from '../models/AuthorshipSale.js';
+import PublicationService from '../models/PublicationService.js';
+import Payment from '../models/Payment.js';
+import Receipt from '../models/Receipt.js';
 
 export const listUsers = asyncHandler(async (req, res) => {
   const { page, limit, skip } = pagination(req.query);
@@ -43,10 +52,34 @@ export const getUser = asyncHandler(async (req, res) => {
 export const updateUser = asyncHandler(async (req, res) => {
   const allowed = ['fullName','contactNumber','status'];
   const patch = {}; allowed.forEach((k) => req.body[k] !== undefined && (patch[k] = req.body[k]));
+  if (String(req.params.id) === String(req.user._id) && patch.status === 'inactive') return res.status(409).json({success:false,message:'You cannot deactivate your own account',errors:[]});
+  if (patch.status !== undefined && !['active','inactive'].includes(patch.status)) return res.status(422).json({success:false,message:'Invalid status',errors:[]});
+  const target=await User.findById(req.params.id).select('role status');
+  if(!target)return res.status(404).json({success:false,message:'User not found',errors:[]});
+  if(target.role==='admin'&&target.status==='active'&&patch.status==='inactive'&&await User.countDocuments({role:'admin',status:'active'})<=1) return res.status(409).json({success:false,message:'The last active administrator cannot be deactivated',errors:[]});
   const user = await User.findByIdAndUpdate(req.params.id, patch, { new: true, runValidators: true }).select('-password');
   if (!user) return res.status(404).json({ success: false, message: 'User not found', errors: [] });
+  if(patch.status==='inactive') await Session.updateMany({user:user._id,revokedAt:null},{$set:{revokedAt:new Date()}});
   await logActivity(req, { action: 'USER_UPDATED', module: 'users', entityType: 'User', entityId: user._id, description: `Updated ${user.fullName}` });
   return ok(res, user, 'User updated successfully');
+});
+
+export const deleteUser = asyncHandler(async (req,res) => {
+  if(String(req.params.id)===String(req.user._id)) return res.status(409).json({success:false,message:'You cannot delete your own account',errors:[]});
+  const user=await User.findById(req.params.id).select('role fullName');
+  if(!user)return res.status(404).json({success:false,message:'User not found',errors:[]});
+  if(user.role==='admin') return res.status(409).json({success:false,message:'Administrator accounts cannot be deleted',errors:[]});
+  const linked=await Promise.all([
+    Vendor.exists({$or:[{createdBy:user._id},{assignedTo:user._id}]}), Client.exists({createdBy:user._id}),
+    Lead.exists({$or:[{createdBy:user._id},{assignedTo:user._id}]}), AuthorshipSale.exists({createdBy:user._id}),
+    PublicationService.exists({createdBy:user._id}), Payment.exists({$or:[{submittedBy:user._id},{verifiedBy:user._id}]}),
+    Receipt.exists({generatedBy:user._id})
+  ]);
+  if(linked.some(Boolean)) return res.status(409).json({success:false,message:'This user has business records. Deactivate the account instead of deleting it.',errors:[]});
+  await Promise.all([Session.deleteMany({user:user._id}),Notification.deleteMany({user:user._id}),ActivityLog.updateMany({user:user._id},{$unset:{user:1}})]);
+  await user.deleteOne();
+  await logActivity(req,{action:'USER_DELETED',module:'users',entityType:'User',entityId:user._id,description:`Deleted user ${user.fullName}`});
+  return ok(res,null,'User deleted successfully');
 });
 
 export const setStatus = asyncHandler(async (req, res) => {

@@ -8,11 +8,11 @@ import {
   Pagination,
   Toast,
   dateFmt,
-  money,
 } from "../../components/UI";
 import * as tw from "../../styles/tw";
 
 export default function Payments({ admin = false }) {
+  const paymentAmount = (p) => new Intl.NumberFormat("en-IN",{style:"currency",currency:p.currency||"INR",maximumFractionDigits:2}).format(Number(p.amount||0));
   const [items, setItems] = useState([]),
     [meta, setMeta] = useState(null),
     [status, setStatus] = useState("pending"),
@@ -105,27 +105,16 @@ export default function Payments({ admin = false }) {
                   <td className={tw.td}>{p.sourceType}</td>
                   <td className={tw.td}>{p.vendor?.vendorName}</td>
                   <td className={tw.td}>{p.submittedBy?.fullName}</td>
-                  <td className={tw.td}>{money(p.amount)}</td>
+                  <td className={tw.td}>{paymentAmount(p)}</td>
                   <td className={tw.td}>{p.transactionId || "—"}</td>
                   <td className={tw.td}>{dateFmt(p.transactionDate || p.createdAt)}</td>
                   <td className={tw.td}>
                     <Badge>{p.status}</Badge>
                   </td>
                   <td className={tw.td}>
-                    {p.status === "pending" ? (
-                      <div className={tw.inlineActions}>
-                        <button
-                          className={tw.actionLink}
-                          onClick={() => setSelected(p)}
-                        >
-                          <Eye size={10} /> Review
-                        </button>
-                      </div>
-                    ) : (
-                      <span className={`${tw.text.muted} ${tw.text.tiny}`}>
-                        Processed
-                      </span>
-                    )}
+                    <button className={tw.actionLink} onClick={() => setSelected(p)}>
+                      <Eye size={10} /> {p.status === "pending" ? "Review" : "View"}
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -136,7 +125,7 @@ export default function Payments({ admin = false }) {
       </div>
       {selected && (
         <Modal
-          title={`Verify ${selected.paymentNo}`}
+          title={`Payment ${selected.paymentNo}`}
           onClose={() => setSelected(null)}
         >
           <div className={tw.summaryList}>
@@ -148,7 +137,7 @@ export default function Payments({ admin = false }) {
             </div>
             <div className={tw.summaryLine}>
               <span className={tw.summaryLineSpan}>Amount</span>
-              <strong className={tw.summaryTotal}>{money(selected.amount)}</strong>
+              <strong className={tw.summaryTotal}>{paymentAmount(selected)}</strong>
             </div>
             <div className={tw.summaryLine}>
               <span className={tw.summaryLineSpan}>Transaction</span>
@@ -181,14 +170,10 @@ export default function Payments({ admin = false }) {
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
           />
-          <div className={tw.formActions}>
-            <Button kind="danger" icon={XCircle} onClick={() => act("reject")}>
-              Reject
-            </Button>
-            <Button icon={CheckCircle2} onClick={() => act("verify")}>
-              Verify Payment
-            </Button>
-          </div>
+          {selected.status==="pending"&&<div className={tw.formActions}>
+            <Button kind="danger" icon={XCircle} onClick={() => act("reject")}>Reject</Button>
+            <Button icon={CheckCircle2} onClick={() => act("verify")}>Verify Payment</Button>
+          </div>}
         </Modal>
       )}
       <Toast toast={toast} onClose={() => setToast(null)} />

@@ -6,6 +6,7 @@ import {
   Button,
   Field,
   Input,
+  Modal,
   Select,
   Textarea,
   Toast,
@@ -48,6 +49,7 @@ export default function LeadGeneration() {
   const [f, setF] = useState(initial),
     [file, setFile] = useState(null),
     [recent, setRecent] = useState([]),
+    [selected, setSelected] = useState(null),
     [toast, setToast] = useState(null),
     [busy, setBusy] = useState(false);
   const set = (k, v) => setF((x) => ({ ...x, [k]: v }));
@@ -352,7 +354,7 @@ export default function LeadGeneration() {
               </Field>
             </div>
             <div className={tw.formActions}>
-              <Button kind="secondary">Reset</Button>
+              <Button kind="secondary" type="button" onClick={()=>{setF(initial);setFile(null);}}>Reset</Button>
               <Button type="submit" icon={Save} disabled={busy}>
                 {busy ? "Saving…" : "Save Lead"}
               </Button>
@@ -473,7 +475,7 @@ export default function LeadGeneration() {
                   <td className={tw.td}>{dateFmt(l.nextFollowUpDate)}</td>
                   <td className={tw.td}>{l.assignedTo?.fullName || "Me"}</td>
                   <td className={tw.td}>
-                    <button className={tw.actionLink}>View</button>
+                    <button className={tw.actionLink} onClick={()=>setSelected(l)}>View</button>
                   </td>
                 </tr>
               ))}
@@ -481,6 +483,7 @@ export default function LeadGeneration() {
           </table>
         </div>
       </div>
+      {selected&&<Modal title="Lead Details" onClose={()=>setSelected(null)} wide><div className={tw.detailGrid}>{[["Lead Reference",selected.leadNo],["Lead Title",selected.leadTitle],["Lead For",selected.leadFor],["Contact Name",selected.contactName],["Email",selected.email||"—"],["Mobile",selected.mobile||"—"],["Organization",selected.organization||"—"],["Target Budget",money(selected.targetBudget)],["Priority",selected.priority],["Status",selected.status],["Next Follow-up",dateFmt(selected.nextFollowUpDate)],["Description",selected.description||"—"]].map(([label,value])=><div className={tw.detailItem} key={label}><span className={tw.detailLabel}>{label}</span><div className={tw.detailValue}>{value}</div></div>)}</div></Modal>}
       <Toast toast={toast} onClose={() => setToast(null)} />
     </>
   );
