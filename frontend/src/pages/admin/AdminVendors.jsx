@@ -152,15 +152,7 @@ export default function AdminVendors({ byEmployee = false }) {
           <option value="active">Active</option>
           <option value="inactive">Inactive</option>
         </select>
-        <Button
-          kind="secondary"
-          onClick={() => {
-            setPage(1);
-            load();
-          }}
-        >
-          Filter
-        </Button>
+
       </div>
       <div className={tw.panel}>
         <div className={tw.tableWrap}>
@@ -172,9 +164,9 @@ export default function AdminVendors({ byEmployee = false }) {
                 <th className={tw.th}>Vendor Type</th>
                 <th className={tw.th}>Contact Person</th>
                 <th className={tw.th}>Email</th>
-                <th className={tw.th}>Contact Number</th>
+              
                 <th className={tw.th}>Status</th>
-                <th className={tw.th}>Added On</th>
+               
                 <th className={tw.th}>Added By</th>
                 <th className={tw.th}>Actions</th>
               </tr>
@@ -189,11 +181,11 @@ export default function AdminVendors({ byEmployee = false }) {
                   <td className={tw.td}>{v.businessType}</td>
                   <td className={tw.td}>{v.contactPerson || "—"}</td>
                   <td className={tw.td}>{v.email}</td>
-                  <td className={tw.td}>{v.mobile}</td>
+                 
                   <td className={tw.td}>
                     <Badge>{v.status}</Badge>
                   </td>
-                  <td className={tw.td}>{dateFmt(v.createdAt)}</td>
+                
                   <td className={tw.td}>{v.assignedTo?.fullName || "—"}</td>
                   <td className={tw.td}>
                     <RecordActions onView={()=>setSelected(v)} onEdit={()=>setEditing({...v,assignedTo:v.assignedTo?._id||v.assignedTo})} onDelete={()=>setRemoving(v)}/>

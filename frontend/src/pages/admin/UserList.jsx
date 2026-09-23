@@ -152,15 +152,7 @@ export default function UserList() {
           <option value="active">Active</option>
           <option value="inactive">Inactive</option>
         </select>
-        <Button
-          kind="secondary"
-          onClick={() => {
-            setPage(1);
-            load();
-          }}
-        >
-          Filter
-        </Button>
+       
         <Button
           kind="secondary"
           icon={Download}
@@ -184,12 +176,12 @@ export default function UserList() {
               <tr>
                 <th className={tw.th}>#</th>
                 <th className={tw.th}>Full Name</th>
-                <th className={tw.th}>Username</th>
+               
                 <th className={tw.th}>Email</th>
                 <th className={tw.th}>Contact Number</th>
                 <th className={tw.th}>User Type</th>
                 <th className={tw.th}>Status</th>
-                <th className={tw.th}>Created On</th>
+             
                 <th className={tw.th}>Actions</th>
               </tr>
             </thead>
@@ -203,7 +195,7 @@ export default function UserList() {
                       <strong className={tw.tdStrong}>{u.fullName}</strong>
                     </div>
                   </td>
-                  <td className={tw.td}>@{u.username}</td>
+                 
                   <td className={tw.td}>{u.email}</td>
                   <td className={tw.td}>{u.contactNumber || "—"}</td>
                   <td className={tw.td}>
@@ -218,7 +210,7 @@ export default function UserList() {
                   <td className={tw.td}>
                     <Badge>{u.status}</Badge>
                   </td>
-                  <td className={tw.td}>{dateFmt(u.createdAt)}</td>
+               
                   <td className={tw.td}>
                     <div className={tw.inlineActions}>
                       <RecordActions onView={()=>setSelected(u)} onEdit={()=>setEditing({...u})} onDelete={u.role!=="admin"?()=>setRemoving(u):undefined}/>
