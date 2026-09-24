@@ -441,8 +441,8 @@ export default function LeadGeneration() {
                 <th className={tw.th}>Target Budget</th>
                 <th className={tw.th}>Status</th>
                 <th className={tw.th}>Priority</th>
-                <th className={tw.th}>Next Follow-up</th>
-                <th className={tw.th}>Assigned To</th>
+             
+               
                 <th className={tw.th}>Actions</th>
               </tr>
             </thead>
@@ -472,8 +472,8 @@ export default function LeadGeneration() {
                       {l.priority}
                     </Badge>
                   </td>
-                  <td className={tw.td}>{dateFmt(l.nextFollowUpDate)}</td>
-                  <td className={tw.td}>{l.assignedTo?.fullName || "Me"}</td>
+                
+                
                   <td className={tw.td}>
                     <button className={tw.actionLink} onClick={()=>setSelected(l)}>View</button>
                   </td>

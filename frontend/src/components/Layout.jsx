@@ -46,7 +46,7 @@ const sections = {
       [
         ["Create User", "/admin/users/create", UserPlus],
         ["Users List", "/admin/users", Users],
-        ["Roles & Permissions", "/admin/roles", ShieldCheck],
+        // ["Roles & Permissions", "/admin/roles", ShieldCheck],
       ],
     ],
     [
@@ -68,19 +68,19 @@ const sections = {
     [
       "ACCOUNTING & LOGS",
       [
-        ["Accounting Log", "/admin/accounting", ClipboardList],
+        // ["Accounting Log", "/admin/accounting", ClipboardList],
         ["Payment Verification", "/admin/payments", FileCheck2],
         ["Receipts", "/admin/receipts", ReceiptText],
-        ["Reports", "/admin/reports", BarChart3],
+        // ["Reports", "/admin/reports", BarChart3],
       ],
     ],
-    [
-      "SYSTEM",
-      [
-        ["Settings", "/admin/settings", Settings],
-        ["Activity Log", "/admin/activity", Activity],
-      ],
-    ],
+    // [
+    //   "SYSTEM",
+    //   [
+    //     ["Settings", "/admin/settings", Settings],
+    //     ["Activity Log", "/admin/activity", Activity],
+    //   ],
+    // ],
   ],
   sales: [
     ["MAIN", [["Dashboard", "/sales/dashboard", LayoutDashboard]]],
@@ -94,25 +94,25 @@ const sections = {
         ["Publication List", "/sales/publications", BookOpen],
         ["Direct Paper Publication", "/sales/publications/create", FileText],
         ["Lead Generation", "/sales/leads/create", Target],
-        ["My Activities", "/sales/activities", Activity],
+        // ["My Activities", "/sales/activities", Activity],
         ["Follow-ups", "/sales/follow-ups", ListTodo],
       ],
     ],
-    [
-      "REPORTS",
-      [
-        ["Sales Reports", "/sales/reports", BarChart3],
-        ["Activity Reports", "/sales/activity-reports", ClipboardList],
-      ],
-    ],
-    [
-      "TOOLS",
-      [
-        ["Templates", "/sales/templates", FileText],
-        ["Pricing & Services", "/sales/pricing", BadgeIndianRupee],
-        ["Communication", "/sales/communication", MessageCircle],
-      ],
-    ],
+    // [
+    //   "REPORTS",
+    //   [
+    //     ["Sales Reports", "/sales/reports", BarChart3],
+    //     ["Activity Reports", "/sales/activity-reports", ClipboardList],
+    //   ],
+    // ],
+    // [
+    //   "TOOLS",
+    //   [
+    //     ["Templates", "/sales/templates", FileText],
+    //     ["Pricing & Services", "/sales/pricing", BadgeIndianRupee],
+    //     ["Communication", "/sales/communication", MessageCircle],
+    //   ],
+    // ],
   ],
   finance: [
     ["MAIN", [["Dashboard", "/finance/dashboard", LayoutDashboard]]],
@@ -205,10 +205,10 @@ export default function Layout() {
         onClick={() => setOpen(false)}
       />
       <aside className={`${sidebarBase} ${open ? sidebarOpen : ""}`}>
-        <div className="h-[72px] flex shrink-0 items-center px-[19px] border-b border-[#f0f1f6]">
+        <div className="h-[64px] flex shrink-0 items-center px-[19px] border-b border-[#f0f1f6]">
           <button type="button" onClick={()=>nav(dashboard)} className="flex items-center gap-[7px] border-0 bg-transparent p-0 font-bold text-[13px]">
-            <img className="w-8 h-[30px] object-cover" src="/rc-logo.png" /> RC
-            ERP
+            <img className="w-10 h-[30px] object-cover" src="/rc-logo.png" /> 
+            RC ERP
           </button>
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden py-[11px] px-[10px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -286,7 +286,7 @@ export default function Layout() {
             >
               {open ? <X /> : <Menu />}
             </button>
-            <div className="flex items-center gap-[7px] text-[9px] text-[#8d94a5] max-[680px]:hidden">
+            <div className="flex items-center gap-[7px] text-[13px] text-[#8d94a5] max-[680px]:hidden">
               <button type="button" className="border-0 bg-transparent p-0 text-[#6d49ef]" onClick={()=>nav(dashboard)}>Dashboard</button>
               <span>›</span>
               <span>
@@ -303,7 +303,7 @@ export default function Layout() {
               <button className={iconBtn} onClick={() => setDrop(!drop)}>
                 <Bell />
                 {notifications.unread > 0 && (
-                  <span className="absolute right-[5px] top-[5px] w-[6px] h-[6px] bg-rc-purple rounded-full border border-white" />
+                  <span className="absolute right-[5px] top-[5px] w-[8px] h-[8px] bg-rc-purple rounded-full border border-white" />
                 )}
               </button>
               <AnimatePresence>
@@ -356,12 +356,12 @@ export default function Layout() {
             </button>
             <div className="relative">
             <button type="button" onClick={()=>setTopProfileMenu((value)=>!value)} className="flex items-center gap-2 border-0 bg-transparent pl-1 text-left" aria-expanded={topProfileMenu}>
-              <div className="w-7 h-7 rounded-full bg-[#f0ebff] text-[#7250ef] grid place-items-center font-bold text-[9px] border border-[#e1d8ff]">
+              <div className="w-8 h-8 rounded-full bg-[#f0ebff] text-[#7250ef] grid place-items-center font-bold text-[12px] border border-[#e1d8ff]">
                 {initials(user.fullName)}
               </div>
               <div className="min-w-0 flex-1 max-[680px]:hidden">
-                <b className="text-[9px] block">{user.fullName}</b>
-                <span className="text-[7.5px] text-[#9aa1b1] block">
+                <b className="text-[12px] block">{user.fullName}</b>
+                <span className="text-[10.5px] text-[#9aa1b1] block">
                   {roleLabel[user.role]}
                 </span>
               </div>

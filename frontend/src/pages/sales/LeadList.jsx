@@ -97,7 +97,7 @@ export default function LeadList() {
                 <th className={tw.th}>Budget</th>
                 <th className={tw.th}>Priority</th>
                 <th className={tw.th}>Status</th>
-                <th className={tw.th}>Next Follow-up</th>
+               
                 <th className={tw.th}>Actions</th>
               </tr>
             </thead>
@@ -134,7 +134,7 @@ export default function LeadList() {
                   <td className={tw.td}>
                     <Badge>{l.status}</Badge>
                   </td>
-                  <td className={tw.td}>{dateFmt(l.nextFollowUpDate)}</td>
+                
                   <td className={tw.td}><RecordActions onView={()=>setSelected(l)} onEdit={()=>setEditing({...l,nextFollowUpDate:l.nextFollowUpDate?.slice?.(0,10)||""})} onDelete={()=>setRemoving(l)}/></td>
                 </tr>
               ))}

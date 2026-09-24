@@ -63,11 +63,11 @@ export default function SalesRecords({ type = "authorship" }) {
                 <th className={tw.th}>
                   {publication ? "Paper / Journal" : "Article / Journal"}
                 </th>
-                <th className={tw.th}>Vendor</th>
+               
                 <th className={tw.th}>Total</th>
                 <th className={tw.th}>Advance</th>
                 <th className={tw.th}>Remaining</th>
-                <th className={tw.th}>Payment Status</th>
+              
               
                 <th className={tw.th}>Action</th>
               </tr>
@@ -86,7 +86,7 @@ export default function SalesRecords({ type = "authorship" }) {
                       {x.journal?.name}
                     </div>
                   </td>
-                  <td className={tw.td}>{x.vendor?.vendorName}</td>
+            
                   <td className={tw.td}>
                     {money(publication ? x.totalAmount : x.totalPrice)}
                   </td>
@@ -94,9 +94,7 @@ export default function SalesRecords({ type = "authorship" }) {
                     {money(publication ? x.advanceAmount : x.advancePayment)}
                   </td>
                   <td className={tw.td}>{money(x.remainingAmount)}</td>
-                  <td className={tw.td}>
-                    <Badge>{x.paymentStatus}</Badge>
-                  </td>
+            
               
                   <td className={tw.td}><RecordActions onView={()=>setSelected(x)} onEdit={()=>setEditing({...x,positions:x.positions?.map((p)=>({...p}))||[]})} onDelete={()=>setRemoving(x)}/></td>
                 </tr>

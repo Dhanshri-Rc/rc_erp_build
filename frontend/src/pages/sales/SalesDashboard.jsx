@@ -237,7 +237,7 @@ export default function SalesDashboard() {
                 <tr>
                   <th className={tw.th}>Activity</th>
                   <th className={tw.th}>Module</th>
-                  <th className={tw.th}>Type</th>
+                
                   <th className={tw.th}>Date</th>
                 </tr>
               </thead>
@@ -248,9 +248,7 @@ export default function SalesDashboard() {
                       <strong className={tw.tdStrong}>{a.description}</strong>
                     </td>
                     <td className={tw.td}>{a.module}</td>
-                    <td className={tw.td}>
-                      <Badge>{a.action.replaceAll("_", " ")}</Badge>
-                    </td>
+                
                     <td className={tw.td}>{dateFmt(a.createdAt)}</td>
                   </tr>
                 ))}
