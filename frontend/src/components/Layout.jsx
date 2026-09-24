@@ -47,33 +47,41 @@ const sections = {
         ["Create User", "/admin/users/create", UserPlus],
         ["Users List", "/admin/users", Users],
         // ["Roles & Permissions", "/admin/roles", ShieldCheck],
-      ],
-    ],
-    [
-      "VENDOR MANAGEMENT",
-      [
-        ["Add Vendor", "/admin/vendors/create", UserPlus],
+         ["Add Vendor", "/admin/vendors/create", UserPlus],
         ["All Vendors", "/admin/vendors", Store],
         ["Vendors by Employee", "/admin/vendors/by-employee", Users],
-      ],
-    ],
-    [
-      "PUBLICATION INVENTORY",
-      [
-        ["Journals", "/admin/journals", BookOpen],
+           ["Journals", "/admin/journals", BookOpen],
         ["Articles", "/admin/articles", FileText],
         ["Authorship Positions", "/admin/authorship-inventory", HandCoins],
-      ],
-    ],
-    [
-      "ACCOUNTING & LOGS",
-      [
-        // ["Accounting Log", "/admin/accounting", ClipboardList],
-        ["Payment Verification", "/admin/payments", FileCheck2],
+              ["Payment Verification", "/admin/payments", FileCheck2],
         ["Receipts", "/admin/receipts", ReceiptText],
-        // ["Reports", "/admin/reports", BarChart3],
       ],
     ],
+    // [
+    //   "VENDOR MANAGEMENT",
+    //   [
+    //     ["Add Vendor", "/admin/vendors/create", UserPlus],
+    //     ["All Vendors", "/admin/vendors", Store],
+    //     ["Vendors by Employee", "/admin/vendors/by-employee", Users],
+    //   ],
+    // ],
+    // [
+    //   "PUBLICATION INVENTORY",
+    //   [
+    //     ["Journals", "/admin/journals", BookOpen],
+    //     ["Articles", "/admin/articles", FileText],
+    //     ["Authorship Positions", "/admin/authorship-inventory", HandCoins],
+    //   ],
+    // ],
+    // [
+    //   "ACCOUNTING & LOGS",
+    //   [
+    //     // ["Accounting Log", "/admin/accounting", ClipboardList],
+    //     ["Payment Verification", "/admin/payments", FileCheck2],
+    //     ["Receipts", "/admin/receipts", ReceiptText],
+    //     // ["Reports", "/admin/reports", BarChart3],
+    //   ],
+    // ],
     // [
     //   "SYSTEM",
     //   [
@@ -130,10 +138,10 @@ const sections = {
       [
         ["Financial Reports", "/finance/reports", BarChart3],
         ["Payment Reports", "/finance/payment-reports", FileText],
-        ["Outstanding Payments", "/finance/outstanding", Calculator],
+        // ["Outstanding Payments", "/finance/outstanding", Calculator],
       ],
     ],
-    ["SYSTEM", [["My Activities", "/finance/activity", Activity]]],
+    // ["SYSTEM", [["My Activities", "/finance/activity", Activity]]],
   ],
 };
 const roleLabel = {
@@ -146,7 +154,7 @@ const sidebarBase =
   "fixed z-50 top-0 bottom-0 left-0 h-screen w-[224px] max-[1200px]:w-[205px] overflow-hidden bg-white border-r border-[#eceef5] flex flex-col transition-transform duration-[250ms] max-[900px]:shadow-[12px_0_30px_rgba(29,34,60,0.12)] max-[900px]:-translate-x-full";
 const sidebarOpen = "max-[900px]:translate-x-0";
 const navItemBase =
-  "flex items-center gap-[10px] h-9 px-[10px] rounded-[6px] text-[#5f687b] my-[2px] text-[12px] transition-all duration-200 hover:bg-[#f7f5ff] hover:text-[#613ef0] hover:translate-x-[2px] [&>svg]:w-[15px] [&>svg]:h-[15px]";
+  "flex items-center gap-[10px] h-9 px-[10px] rounded-[6px] text-[#5f687b] my-[2px] text-[12.5px] transition-all duration-200 hover:bg-[#f7f5ff] hover:text-[#613ef0] hover:translate-x-[2px] [&>svg]:w-[15px] [&>svg]:h-[15px]";
 const navItemActive =
   "bg-rc-grad text-white shadow-[0_5px_12px_rgba(105,75,232,0.18)] hover:translate-x-0 hover:bg-rc-grad hover:text-white";
 const iconBtn =
@@ -206,7 +214,7 @@ export default function Layout() {
       />
       <aside className={`${sidebarBase} ${open ? sidebarOpen : ""}`}>
         <div className="h-[64px] flex shrink-0 items-center px-[19px] border-b border-[#f0f1f6]">
-          <button type="button" onClick={()=>nav(dashboard)} className="flex items-center gap-[7px] border-0 bg-transparent p-0 font-bold text-[13px]">
+          <button type="button" onClick={()=>nav(dashboard)} className="flex items-center gap-[14px] border-0 bg-transparent p-0 font-bold text-[18px]">
             <img className="w-10 h-[30px] object-cover" src="/rc-logo.png" /> 
             RC ERP
           </button>
@@ -214,9 +222,9 @@ export default function Layout() {
         <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden py-[11px] px-[10px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {sections[user.role].map(([group, items]) => (
             <div key={group}>
-              <div className="text-[9.5px] font-semibold text-[#afb5c4] tracking-[0.08em] mt-2.5 mx-[9px] mb-1.5">
+              {/* <div className="text-[9.5px] font-semibold text-[#afb5c4] tracking-[0.08em] mt-2.5 mx-[9px] mb-1.5">
                 {group}
-              </div>
+              </div> */}
               {items.map(([label, to, Icon]) => (
                 <NavLink
                   end
