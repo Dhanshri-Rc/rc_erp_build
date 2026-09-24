@@ -68,7 +68,7 @@ export default function SalesRecords({ type = "authorship" }) {
                 <th className={tw.th}>Advance</th>
                 <th className={tw.th}>Remaining</th>
                 <th className={tw.th}>Payment Status</th>
-                <th className={tw.th}>Created</th>
+              
                 <th className={tw.th}>Action</th>
               </tr>
             </thead>
@@ -97,7 +97,7 @@ export default function SalesRecords({ type = "authorship" }) {
                   <td className={tw.td}>
                     <Badge>{x.paymentStatus}</Badge>
                   </td>
-                  <td className={tw.td}>{dateFmt(x.createdAt)}</td>
+              
                   <td className={tw.td}><RecordActions onView={()=>setSelected(x)} onEdit={()=>setEditing({...x,positions:x.positions?.map((p)=>({...p}))||[]})} onDelete={()=>setRemoving(x)}/></td>
                 </tr>
               ))}
