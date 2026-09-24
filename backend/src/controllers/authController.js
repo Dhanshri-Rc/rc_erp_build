@@ -63,9 +63,15 @@ export const login = asyncHandler(async (req, res) => {
     });
   }
 
-  const user = await User.findOne({
-    $or: [{ email: loginValue }, { username: loginValue }],
-  }).select("+password");
+  // const user = await User.findOne({
+  //   $or: [{ email: loginValue }, { username: loginValue }],
+  // }).select("+password");
+
+  const user = await User.findOne(
+  loginValue.includes("@")
+    ? { email: loginValue }
+    : { username: loginValue }
+).select("+password");
 
   if (!user || !(await user.comparePassword(password))) {
     return res.status(401).json({
