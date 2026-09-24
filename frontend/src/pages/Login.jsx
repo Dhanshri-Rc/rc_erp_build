@@ -1,4 +1,3 @@
-
 import { useRef, useState } from "react";
 import {
   Eye,
@@ -68,145 +67,97 @@ export default function Login() {
   };
 
   return (
-    <main className="relative flex h-[100dvh] w-full items-center justify-center overflow-hidden bg-white px-4 py-3 font-['Inter',Arial,sans-serif] text-[#22283a]">
-      {/* Top-left decorative rings */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -left-[118px] -top-[145px] h-[340px] w-[340px] rounded-full border-[72px] border-[rgba(112,79,244,0.13)] bg-[linear-gradient(135deg,rgba(124,93,246,0.56),rgba(84,177,221,0.25))] max-[680px]:-left-[105px] max-[680px]:-top-[95px] max-[680px]:h-[230px] max-[680px]:w-[230px] max-[680px]:border-[48px]"
-      />
-
-      {/* Bottom-right decorative gradient ring */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -bottom-[285px] -right-[160px] h-[500px] w-[500px] rounded-full bg-[linear-gradient(110deg,#6f4cf4_0%,#5e6bea_47%,#10b8bf_100%)] opacity-[0.88] max-[680px]:-bottom-[190px] max-[680px]:-right-[125px] max-[680px]:h-[330px] max-[680px]:w-[330px]"
-      >
-        <div className="absolute inset-[82px] rounded-full bg-white max-[680px]:inset-[55px]" />
-      </div>
-
-      {/* Top-right wave */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-[105px] -top-[95px] h-[210px] w-[520px] rotate-12 opacity-20 [background:repeating-radial-gradient(ellipse_at_center,transparent_0_10px,#b9bfd8_11px_12px,transparent_13px_21px)]"
-      />
-
-      {/* Bottom-left wave */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -bottom-[90px] -left-[170px] h-[210px] w-[520px] rotate-[24deg] opacity-20 [background:repeating-radial-gradient(ellipse_at_center,transparent_0_10px,#b9bfd8_11px_12px,transparent_13px_21px)]"
-      />
-
-      <div className="relative z-10 flex max-h-full w-full max-w-[480px] flex-col justify-center text-center max-[680px]:max-w-[490px]">
+    <main className="flex min-h-screen min-h-[100dvh] w-full items-center justify-center overflow-x-hidden bg-[#f7f8fc] px-4 py-6 font-['Inter',Arial,sans-serif] text-[#22283a] sm:px-6 sm:py-8">
+      <div className="my-auto w-full max-w-[420px]">
         <form
-  onSubmit={submit}
-  autoComplete="on"
-  className="w-full rounded-[18px] border border-[#e5e8f0] bg-white px-[74px] pb-7 pt-5 shadow-[0_12px_36px_rgba(59,72,125,0.08)] max-[680px]:px-6 max-[680px]:pb-6 max-[680px]:pt-5 max-[390px]:px-[17px]"
->
-          <img
-  src="/rc-logo.png"
-  alt="RC ERP"
-  className="mx-auto -mb-[5px] block h-[64px] w-[84px] object-cover object-center"
-/>
-
-          <h1 className="m-0 mt-1 text-[25px] font-bold tracking-[-0.7px] text-[#171b25] max-[390px]:text-[25px]">
-            RC ERP
-          </h1>
-
-          <p className="mb-0 mt-1 text-[14px] font-medium text-[#68708a]">
-            One Platform.{" "}
-            <strong className="font-bold text-[#7653f2]">Complete</strong>{" "}
-            <strong className="font-bold text-[#0cacb4]">Control.</strong>
-          </p>
-
-          <div className="relative mt-3 h-px bg-[#edf0f5]">
-            <span className="absolute left-1/2 top-[-1px] h-[3px] w-12 -translate-x-1/2 rounded-[10px] bg-[linear-gradient(110deg,#6f4cf4_0%,#5e6bea_47%,#10b8bf_100%)]" />
+          onSubmit={submit}
+          autoComplete="on"
+          className="w-full rounded-2xl border border-[#e5e9f0] bg-white px-5 py-7 text-left shadow-[0_12px_40px_rgba(26,43,75,0.07)] min-[380px]:px-7 sm:px-9 sm:py-8"
+        >
+          <div className="mb-7 text-center">
+            <img
+              src="/rc-logo.png"
+              alt="RC ERP"
+              className="mx-auto block h-14 w-20 object-contain"
+            />
+            <h1 className="mt-2 text-[23px] font-bold tracking-tight text-[#1d2536]">
+              RC ERP
+            </h1>
+            <p className="mt-1 text-[13px] leading-5 text-[#68738a]">
+              One Platform.{" "}
+              <strong className="font-semibold text-[#674be3]">Complete</strong>{" "}
+              <strong className="font-semibold text-[#0c929a]">Control.</strong>
+            </p>
           </div>
 
-          <h2 className="mb-0 mt-3 text-[17px] font-[600] text-[#171b25]">
-            Welcome Back!
-          </h2>
-
-          <p className="mb-4 mt-1 text-[13px] text-[#7a8399]">
-            Sign in to continue to your account
-          </p>
-
-          {/* Username or email */}
-          <div className="relative mb-2.5">
-            <UserRound
-              aria-hidden="true"
-              className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#8490a8]"
-            />
-
-            <input
-              autoFocus
-              type="text"
-              name="identifier"
-              autoComplete="username"
-              autoCapitalize="none"
-              autoCorrect="off"
-              spellCheck={false}
-              required
-              maxLength={254}
-              placeholder="Username or Email"
-              value={form.identifier}
-              onChange={(e) =>
-                setForm((current) => ({
-                  ...current,
-                  identifier: e.target.value,
-                }))
-              }
-              className="h-10 w-full rounded-[7px] border border-[#dfe3ec] bg-white pb-0 pl-12 pr-[42px] pt-0 text-[13px] text-[#394259] outline-none transition duration-200 placeholder:text-[#7c8498] focus:border-[#7755ef] focus:shadow-[0_0_0_3px_rgba(111,76,244,0.08)]"
-            />
+          <div className="mb-5">
+            <label htmlFor="login-identifier" className="mb-2 block text-[13px] font-semibold text-[#354057]">
+              Username or email
+            </label>
+            <div className="relative">
+              <UserRound aria-hidden="true" className="pointer-events-none absolute left-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-[#8792a6]" />
+              <input
+                id="login-identifier"
+                autoFocus
+                type="text"
+                name="identifier"
+                autoComplete="username"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
+                required
+                maxLength={254}
+                placeholder="Username or email"
+                value={form.identifier}
+                onChange={(e) => setForm((current) => ({ ...current, identifier: e.target.value }))}
+                aria-describedby={error ? "login-error" : undefined}
+                className="h-11 w-full rounded-lg border border-[#d8deea] bg-white pl-11 pr-3 text-base text-[#253249] outline-none transition-colors placeholder:text-[#939eae] hover:border-[#aab6ca] focus:border-[#674be3] focus:ring-[3px] focus:ring-[#674be3]/10 sm:text-sm"
+              />
+            </div>
           </div>
 
-          {/* Password */}
-          <div className="relative mb-[14px]">
-            <LockKeyhole
-              aria-hidden="true"
-              className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#8490a8]"
-            />
-
-            <input
-              type={show ? "text" : "password"}
-              name="password"
-              autoComplete="current-password"
-              required
-              maxLength={128}
-              placeholder="Password"
-              value={form.password}
-              onChange={(e) =>
-                setForm((current) => ({
-                  ...current,
-                  password: e.target.value,
-                }))
-              }
-              className="h-10 w-full rounded-[7px] border border-[#dfe3ec] bg-white pb-0 pl-12 pr-[42px] pt-0 text-[13px] text-[#394259] outline-none transition duration-200 placeholder:text-[#7c8498] focus:border-[#7755ef] focus:shadow-[0_0_0_3px_rgba(111,76,244,0.08)]"
-            />
-
-            <button
-              type="button"
-              aria-label={show ? "Hide password" : "Show password"}
-              onClick={() => setShow(!show)}
-              className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center justify-center border-0 bg-transparent p-[4px] text-[#8590a6] transition hover:text-[#6538f3] focus:outline-none"
-            >
-              {show ? (
-                <EyeOff className="h-5 w-5" />
-              ) : (
-                <Eye className="h-5 w-5" />
-              )}
-            </button>
+          <div className="mb-5">
+            <label htmlFor="login-password" className="mb-2 block text-[13px] font-semibold text-[#354057]">
+              Password
+            </label>
+            <div className="relative">
+              <LockKeyhole aria-hidden="true" className="pointer-events-none absolute left-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-[#8792a6]" />
+              <input
+                id="login-password"
+                type={show ? "text" : "password"}
+                name="password"
+                autoComplete="current-password"
+                required
+                maxLength={128}
+                placeholder="Password"
+                value={form.password}
+                onChange={(e) => setForm((current) => ({ ...current, password: e.target.value }))}
+                aria-describedby={error ? "login-error" : undefined}
+                className="h-11 w-full rounded-lg border border-[#d8deea] bg-white pl-11 pr-12 text-base text-[#253249] outline-none transition-colors placeholder:text-[#939eae] hover:border-[#aab6ca] focus:border-[#674be3] focus:ring-[3px] focus:ring-[#674be3]/10 sm:text-sm"
+              />
+              <button
+                type="button"
+                aria-label={show ? "Hide password" : "Show password"}
+                onClick={() => setShow(!show)}
+                className="absolute right-1 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-md border-0 bg-transparent text-[#68758c] hover:bg-[#f2f0ff] hover:text-[#674be3] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#674be3]"
+              >
+                {show ? <EyeOff className="h-[18px] w-[18px]" /> : <Eye className="h-[18px] w-[18px]" />}
+              </button>
+            </div>
           </div>
 
           {error && (
             <div
+              id="login-error"
               role="alert"
-              className="-mt-[5px] mb-[10px] text-left text-[9px] text-red-500"
+              className="mb-4 rounded-md bg-red-50 px-3 py-2 text-left text-[13px] leading-5 text-red-700"
             >
               {error}
             </div>
           )}
 
-          <div className="mb-4 mt-2 flex items-center justify-between text-[12px]">
-            <label className="flex cursor-pointer items-center gap-2 text-[#394259]">
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-x-3 gap-y-2 text-[12px] sm:text-[13px]">
+            <label className="flex cursor-pointer items-center gap-2 text-[#3d4960]">
               <input
                 type="checkbox"
                 name="remember"
@@ -217,7 +168,7 @@ export default function Login() {
                     remember: e.target.checked,
                   }))
                 }
-                className="h-[15px] w-[15px] cursor-pointer accent-[#6f4cf4]"
+                className="h-4 w-4 cursor-pointer accent-[#674be3]"
               />
               <span>Remember me</span>
             </label>
@@ -229,7 +180,7 @@ export default function Login() {
                   "Password resets are handled securely by your RC ERP administrator.",
                 )
               }
-              className="border-0 bg-transparent p-0 text-[#6538f3] transition hover:text-[#4f26d3] hover:underline focus:outline-none"
+              className="rounded-sm border-0 bg-transparent p-0 font-medium text-[#6045d4] transition hover:text-[#4831b6] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#674be3]"
             >
               Forgot Password?
             </button>
@@ -239,61 +190,19 @@ export default function Login() {
             type="submit"
             disabled={busy}
             aria-busy={busy}
-            className="h-10 w-full rounded-[7px] border-0 bg-[linear-gradient(110deg,#6f4cf4_0%,#5e6bea_47%,#10b8bf_100%)] text-[13px] font-semibold text-white shadow-[0_7px_20px_rgba(99,77,229,0.18)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_11px_24px_rgba(99,77,229,0.25)] disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transform-none motion-reduce:transition-none"
+            className="h-11 w-full rounded-lg border-0 bg-[#674be3] text-sm font-semibold text-white shadow-[0_5px_14px_rgba(103,75,227,0.17)] transition-colors hover:bg-[#573bd0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#674be3] disabled:cursor-not-allowed disabled:opacity-60"
           >
             {busy ? "Signing in…" : "Login"}
           </button>
-
-          <div className="my-3.5 flex items-center gap-[18px] text-[13px] text-[#485067] before:h-px before:flex-1 before:bg-[#e7e9ef] after:h-px after:flex-1 after:bg-[#e7e9ef]">
-            or
-          </div>
-
-          <button
-            type="button"
-            onClick={() =>
-              alert(
-                "Google SSO can be enabled with your organization OAuth credentials.",
-              )
-            }
-            className="flex h-[40px] w-full items-center justify-center rounded-[7px] border border-[#dfe3ec] bg-white text-[13px] font-medium text-[#485067] shadow-sm transition hover:border-[#cbd0dc] hover:bg-[#fafbfc] focus:outline-none focus:ring-2 focus:ring-[#7653f2]/15"
-          >
-            <svg
-              aria-hidden="true"
-              viewBox="0 0 24 24"
-              className="mr-[10px] h-[18px] w-[18px]"
-            >
-              <path
-                fill="#4285F4"
-                d="M21.6 12.23c0-.71-.06-1.4-.18-2.07H12v3.91h5.38a4.6 4.6 0 0 1-2 3.02v2.54h3.24c1.9-1.75 2.98-4.33 2.98-7.4Z"
-              />
-              <path
-                fill="#34A853"
-                d="M12 22c2.7 0 4.98-.9 6.63-2.43l-3.24-2.54c-.9.6-2.05.96-3.39.96-2.61 0-4.82-1.76-5.61-4.13H3.04v2.62A10 10 0 0 0 12 22Z"
-              />
-              <path
-                fill="#FBBC05"
-                d="M6.39 13.86A6.02 6.02 0 0 1 6.08 12c0-.65.11-1.28.31-1.86V7.52H3.04A10 10 0 0 0 2 12c0 1.61.38 3.14 1.04 4.48l3.35-2.62Z"
-              />
-              <path
-                fill="#EA4335"
-                d="M12 6.01c1.47 0 2.79.51 3.83 1.5l2.87-2.88A9.64 9.64 0 0 0 12 2a10 10 0 0 0-8.96 5.52l3.35 2.62C7.18 7.77 9.39 6.01 12 6.01Z"
-              />
-            </svg>
-
-            Sign in with Google
-          </button>
         </form>
 
-        <div className="mt-3 flex items-center justify-center text-[12px] font-semibold text-[#283248]">
-          <span className="mr-2 inline-flex h-[19px] w-[19px] items-center justify-center rounded-md border-2 border-[#7654ef] text-[#7654ef]">
-            <ShieldCheck className="h-[13px] w-[13px]" />
-          </span>
-          Secure. Reliable. Built for Better Performance.
-        </div>
-
-        <p className="mb-0 mt-2 text-[11px] text-[#7c8498]">
+        <div className="mt-5 flex items-center justify-center gap-2 text-center text-[11px] font-medium leading-5 text-[#667188] sm:text-xs">
+          <ShieldCheck aria-hidden="true" className="h-4 w-4 shrink-0 text-[#674be3]" />
+          <p className=" text-center text-[11px] text-[#8992a4]">
           © 2026 RC ERP. All rights reserved.
         </p>
+        </div>
+      
       </div>
     </main>
   );
