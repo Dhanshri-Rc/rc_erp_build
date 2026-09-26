@@ -35,6 +35,14 @@ app.use(rejectUnsafeInput);
 app.use(enforceTrustedOrigin(allowedOrigins));
 if (process.env.NODE_ENV !== 'test') app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 
+app.get('/', (_req, res) => {
+  res.json({
+    success: true,
+    message: 'RC ERP API is running',
+    health: '/api/health',
+  });
+}); 
+
 app.get('/api/health', (_, res) => {
   const ready=mongoose.connection.readyState===1;
   return res.status(ready?200:503).json({success:ready,message:ready?'RC ERP API is healthy':'Database is unavailable'});
