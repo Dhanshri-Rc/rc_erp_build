@@ -95,8 +95,7 @@ export default function LeadList() {
                 <th className={tw.th}>Contact</th>
                 <th className={tw.th}>Lead For</th>
                 <th className={tw.th}>Budget</th>
-                <th className={tw.th}>Priority</th>
-                <th className={tw.th}>Status</th>
+              
                
                 <th className={tw.th}>Actions</th>
               </tr>
@@ -118,22 +117,7 @@ export default function LeadList() {
                   </td>
                   <td className={tw.td}>{l.leadFor}</td>
                   <td className={tw.td}>{money(l.targetBudget)}</td>
-                  <td className={tw.td}>
-                    <Badge
-                      tone={
-                        l.priority === "high" || l.priority === "urgent"
-                          ? "red"
-                          : l.priority === "medium"
-                            ? "orange"
-                            : "blue"
-                      }
-                    >
-                      {l.priority}
-                    </Badge>
-                  </td>
-                  <td className={tw.td}>
-                    <Badge>{l.status}</Badge>
-                  </td>
+                
                 
                   <td className={tw.td}><RecordActions onView={()=>setSelected(l)} onEdit={()=>setEditing({...l,nextFollowUpDate:l.nextFollowUpDate?.slice?.(0,10)||""})} onDelete={()=>setRemoving(l)}/></td>
                 </tr>
