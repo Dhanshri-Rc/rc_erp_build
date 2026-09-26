@@ -43,8 +43,8 @@ export default function ArticleManagement() {
         <div className={tw.formActions}><Button type="submit" icon={FilePlus2} disabled={busy}>{busy?"Adding…":"Add Article"}</Button></div>
       </form>
       <div className={tw.panel}><div className={tw.panelHead}><h3 className={tw.panelHeadH3}>Article List ({items.length})</h3></div><div className={tw.tableWrap}>
-        <table className={tw.dataTable}><thead><tr><th className={tw.th}>Article</th><th className={tw.th}>Journal</th><th className={tw.th}>ISSN</th><th className={tw.th}>Action</th></tr></thead>
-          <tbody>{items.map((a)=><tr key={a._id} className={tw.tr}><td className={tw.td}><strong className={tw.tdStrong}>{a.title}</strong></td><td className={tw.td}>{a.journal?.name}</td><td className={tw.td}>{a.issn}</td><td className={tw.td}><RecordActions onView={()=>setSelected(a)} onEdit={()=>setEditing({...a,journal:a.journal?._id||a.journal})} onDelete={()=>setRemoving(a)}/></td></tr>)}</tbody>
+        <table className={tw.dataTable}><thead><tr><th className={tw.th}>Article</th><th className={tw.th}>ISSN</th><th className={tw.th}>Action</th></tr></thead>
+          <tbody>{items.map((a)=><tr key={a._id} className={tw.tr}><td className={tw.td}><strong className={tw.tdStrong}>{a.title}</strong></td><td className={tw.td}>{a.issn}</td><td className={tw.td}><RecordActions onView={()=>setSelected(a)} onEdit={()=>setEditing({...a,journal:a.journal?._id||a.journal})} onDelete={()=>setRemoving(a)}/></td></tr>)}</tbody>
         </table>
       </div></div>
       {selected && <Modal title="Article & Position Details" onClose={()=>setSelected(null)} wide>
