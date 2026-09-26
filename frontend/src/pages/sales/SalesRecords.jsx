@@ -59,14 +59,14 @@ export default function SalesRecords({ type = "authorship" }) {
           <table className={tw.dataTable}>
             <thead>
               <tr>
-                <th className={tw.th}>Reference</th>
+            
                 <th className={tw.th}>
                   {publication ? "Paper / Journal" : "Article / Journal"}
                 </th>
                
                 <th className={tw.th}>Total</th>
                 <th className={tw.th}>Advance</th>
-                <th className={tw.th}>Remaining</th>
+              
               
               
                 <th className={tw.th}>Action</th>
@@ -75,11 +75,7 @@ export default function SalesRecords({ type = "authorship" }) {
             <tbody>
               {items.map((x) => (
                 <tr key={x._id} className={tw.tr}>
-                  <td className={tw.td}>
-                    <strong className={tw.tdStrong}>
-                      {publication ? x.publicationNo : x.saleNo}
-                    </strong>
-                  </td>
+              
                   <td className={tw.td}>
                     {publication ? x.paperTitle : x.article?.title}
                     <div className={`${tw.text.tiny} ${tw.text.muted}`}>
@@ -93,7 +89,7 @@ export default function SalesRecords({ type = "authorship" }) {
                   <td className={tw.td}>
                     {money(publication ? x.advanceAmount : x.advancePayment)}
                   </td>
-                  <td className={tw.td}>{money(x.remainingAmount)}</td>
+             
             
               
                   <td className={tw.td}><RecordActions onView={()=>setSelected(x)} onEdit={()=>setEditing({...x,positions:x.positions?.map((p)=>({...p}))||[]})} onDelete={()=>setRemoving(x)}/></td>
